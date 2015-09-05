@@ -52,7 +52,7 @@ export default {
           pollViews[pollName] = pollView;
         });
 
-        messageBus.subscribe("/polls/" + this.get("post.id"), results => {
+        messageBus.subscribe("/signups/" + this.get("post.id"), results => {
           if (results && results.polls) {
             _.forEach(results.polls, poll => {
               if (pollViews[poll.name]) {
@@ -66,7 +66,7 @@ export default {
       }.on("postViewInserted", "postViewUpdated"),
 
       _cleanUpPollViews: function() {
-        messageBus.unsubscribe("/polls/" + this.get("post.id"));
+        messageBus.unsubscribe("/signups/" + this.get("post.id"));
 
         if (this.get("pollViews")) {
           _.forEach(this.get("pollViews"), v => v.destroy());

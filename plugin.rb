@@ -80,7 +80,7 @@ after_initialize do
           post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"] = votes
           post.save_custom_fields(true)
 
-          MessageBus.publish("/polls/#{post_id}", { polls: polls })
+          MessageBus.publish("/signups/#{post_id}", { polls: polls })
 
           return [poll, options]
         end
@@ -116,7 +116,7 @@ after_initialize do
 
           post.save_custom_fields(true)
 
-          MessageBus.publish("/polls/#{post_id}", { polls: polls })
+          MessageBus.publish("/signups/#{post_id}", { polls: polls })
 
           polls[poll_name]
         end
@@ -157,7 +157,7 @@ after_initialize do
   end
 
   require_dependency "application_controller"
-  class DiscoursePoll::PollsController < ::ApplicationController
+  class DiscourseSignups::PollsController < ::ApplicationController
     requires_plugin PLUGIN_NAME
 
     before_filter :ensure_logged_in
@@ -169,7 +169,7 @@ after_initialize do
       user_id   = current_user.id
 
       begin
-        poll, options = DiscoursePoll::Poll.vote(post_id, poll_name, options, user_id)
+        poll, options = DiscourseSignups::Poll.vote(post_id, poll_name, options, user_id)
         render json: { poll: poll, vote: options }
       rescue StandardError => e
         render_json_error e.message
@@ -183,7 +183,7 @@ after_initialize do
       user_id   = current_user.id
 
       begin
-        poll = DiscoursePoll::Poll.toggle_status(post_id, poll_name, status, user_id)
+        poll = DiscourseSignups::Poll.toggle_status(post_id, poll_name, status, user_id)
         render json: { poll: poll }
       rescue StandardError => e
         render_json_error e.message
@@ -192,13 +192,13 @@ after_initialize do
 
   end
 
-  DiscoursePoll::Engine.routes.draw do
+  DiscourseSignups::Engine.routes.draw do
     put "/vote" => "polls#vote"
     put "/toggle_status" => "polls#toggle_status"
   end
 
   Discourse::Application.routes.append do
-    mount ::DiscoursePoll::Engine, at: "/polls"
+    mount ::DiscourseSignups::Engine, at: "/signups"
   end
 
   Post.class_eval do
@@ -217,8 +217,8 @@ after_initialize do
     end
   end
 
-  DATA_PREFIX ||= "data-poll-".freeze
-  DEFAULT_POLL_NAME ||= "poll".freeze
+  DATA_PREFIX ||= "data-signup-".freeze
+  DEFAULT_POLL_NAME ||= "signup".freeze
 
   validate(:post, :validate_polls) do
     # only care when raw has changed!
@@ -226,7 +226,7 @@ after_initialize do
 
     polls = {}
 
-    extracted_polls = DiscoursePoll::Poll::extract(self.raw, self.topic_id)
+    extracted_polls = DiscourseSignups::Poll::extract(self.raw, self.topic_id)
 
     extracted_polls.each do |poll|
       # polls should have a unique name
@@ -254,10 +254,10 @@ after_initialize do
       end
 
       # maximum # of options
-      if poll["options"].size > SiteSetting.poll_maximum_options
+      if poll["options"].size > SiteSetting.signup_maximum_options
         poll["name"] == DEFAULT_POLL_NAME ?
-          self.errors.add(:base, I18n.t("poll.default_poll_must_have_less_options", max: SiteSetting.poll_maximum_options)) :
-          self.errors.add(:base, I18n.t("poll.named_poll_must_have_less_options", name: poll["name"], max: SiteSetting.poll_maximum_options))
+          self.errors.add(:base, I18n.t("poll.default_poll_must_have_less_options", max: SiteSetting.signup_maximum_options)) :
+          self.errors.add(:base, I18n.t("poll.named_poll_must_have_less_options", name: poll["name"], max: SiteSetting.signup_maximum_options))
         return
       end
 
@@ -337,7 +337,7 @@ after_initialize do
           post.save_custom_fields(true)
 
           # publish the changes
-          MessageBus.publish("/polls/#{post.id}", { polls: polls })
+          MessageBus.publish("/signups/s/#{post.id}", { polls: polls })
         end
       end
     else

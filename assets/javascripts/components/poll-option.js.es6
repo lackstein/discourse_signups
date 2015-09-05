@@ -1,10 +1,10 @@
 export default Em.Component.extend({
   tagName: "li",
-  attributeBindings: ["data-poll-option-id", "data-poll-selected"],
+  attributeBindings: ["data-signup-option-id", "data-signup-selected"],
 
-  "data-poll-option-id": Em.computed.alias("option.id"),
+  "data-signup-option-id": Em.computed.alias("option.id"),
 
-  "data-poll-selected": function() {
+  "data-signup-selected": function() {
     return this.get("option.selected") ? "selected" : false;
   }.property("option.selected"),
 

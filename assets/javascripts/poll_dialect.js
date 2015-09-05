@@ -2,16 +2,16 @@
 
 (function() {
 
-  var DATA_PREFIX = "data-poll-";
-  var DEFAULT_POLL_NAME = "poll";
+  var DATA_PREFIX = "data-signup-";
+  var DEFAULT_POLL_NAME = "signup";
 
   var WHITELISTED_ATTRIBUTES = ["type", "name", "min", "max", "step", "order", "status"];
 
   var ATTRIBUTES_REGEX = new RegExp("(" + WHITELISTED_ATTRIBUTES.join("|") + ")=['\"]?[^\\s\\]]+['\"]?", "g");
 
   Discourse.Dialect.replaceBlock({
-    start: /\[poll((?:\s+\w+=[^\s\]]+)*)\]([\s\S]*)/igm,
-    stop: /\[\/poll\]/igm,
+    start: /\[signup((?:\s+\w+=[^\s\]]+)*)\]([\s\S]*)/igm,
+    stop: /\[\/signup\]/igm,
 
     emitter: function(blockContents, matches) {
       var o, contents = [];

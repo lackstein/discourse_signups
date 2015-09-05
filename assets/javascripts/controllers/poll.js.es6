@@ -134,7 +134,7 @@ export default Ember.Controller.extend({
 
       this.set("loading", true);
 
-      Discourse.ajax("/polls/vote", {
+      Discourse.ajax("/signups/vote", {
         type: "PUT",
         data: {
           post_id: this.get("post.id"),
@@ -169,7 +169,7 @@ export default Ember.Controller.extend({
           if (confirmed) {
             self.set("loading", true);
 
-            Discourse.ajax("/polls/toggle_status", {
+            Discourse.ajax("/signups/toggle_status", {
               type: "PUT",
               data: {
                 post_id: self.get("post.id"),

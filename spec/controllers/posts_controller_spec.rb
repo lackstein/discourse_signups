@@ -15,7 +15,7 @@ describe PostsController do
       xhr :post, :create, { title: title, raw: "[poll]\n- A\n- B\n[/poll]" }
       expect(response).to be_success
       json = ::JSON.parse(response.body)
-      expect(json["cooked"]).to match("data-poll-")
+      expect(json["cooked"]).to match("data-signup-")
       expect(json["polls"]["poll"]).to be
     end
 
@@ -24,7 +24,7 @@ describe PostsController do
       xhr :post, :create, { topic_id: post.topic.id, raw: "[poll]\n- A\n- B\n[/poll]" }
       expect(response).to be_success
       json = ::JSON.parse(response.body)
-      expect(json["cooked"]).to match("data-poll-")
+      expect(json["cooked"]).to match("data-signup-")
       expect(json["polls"]["poll"]).to be
     end
 
@@ -65,7 +65,7 @@ describe PostsController do
       xhr :post, :create, { title: title, raw: "[poll name=<script>alert('xss')</script>]\n- A\n- B\n[/poll]" }
       expect(response).to be_success
       json = ::JSON.parse(response.body)
-      expect(json["cooked"]).to match("data-poll-")
+      expect(json["cooked"]).to match("data-signup-")
       expect(json["polls"]["&lt;script&gt;alert(xss)&lt;/script&gt;"]).to be
     end
 
@@ -73,7 +73,7 @@ describe PostsController do
       xhr :post, :create, { title: title, raw: "[Polls are awesome](/foobar)\n[poll]\n- A\n- B\n[/poll]" }
       expect(response).to be_success
       json = ::JSON.parse(response.body)
-      expect(json["cooked"]).to match("data-poll-")
+      expect(json["cooked"]).to match("data-signup-")
       expect(json["polls"]).to be
     end
 
@@ -81,7 +81,7 @@ describe PostsController do
       xhr :post, :create, { title: title, raw: "[poll name=1]\n- A\n[poll name=2]\n- B\n- C\n[/poll]\n- D\n[/poll]" }
       expect(response).to be_success
       json = ::JSON.parse(response.body)
-      expect(json["cooked"]).to match("data-poll-")
+      expect(json["cooked"]).to match("data-signup-")
       expect(json["polls"]["1"]).to_not be
       expect(json["polls"]["2"]).to be
     end
@@ -170,7 +170,7 @@ describe PostsController do
       xhr :post, :create, { title: title, raw: "[poll]\n- A\n- B\n[/poll]\n[poll name=foo]\n- A\n- B\n[/poll]" }
       expect(response).to be_success
       json = ::JSON.parse(response.body)
-      expect(json["cooked"]).to match("data-poll-")
+      expect(json["cooked"]).to match("data-signup-")
       expect(json["polls"]["poll"]).to be
       expect(json["polls"]["foo"]).to be
     end
