@@ -68,7 +68,7 @@ task "poll:migrate_old_polls" => :environment do
           # make sure we have a match
           next if selected_option.blank?
           # submit vote
-          DiscoursePoll::Poll.vote(post_id, "poll", [selected_option["id"]], user_id) rescue nil
+          DiscourseSignups::Poll.vote(post_id, "poll", [selected_option["id"]], user_id) rescue nil
         end
         # close the poll
         if post.topic.archived? || post.topic.closed? || poll_was_closed?(post.topic.title)

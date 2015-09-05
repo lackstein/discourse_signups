@@ -105,7 +105,7 @@ describe PostsController do
         end
 
         it "resets the votes" do
-          DiscoursePoll::Poll.vote(post_id, "poll", ["5c24fc1df56d764b550ceae1b9319125"], user.id)
+          DiscourseSignups::Poll.vote(post_id, "poll", ["5c24fc1df56d764b550ceae1b9319125"], user.id)
           xhr :put, :update, { id: post_id, post: { raw: "[poll]\n- A\n- B\n- C\n[/poll]" } }
           expect(response).to be_success
           json = ::JSON.parse(response.body)

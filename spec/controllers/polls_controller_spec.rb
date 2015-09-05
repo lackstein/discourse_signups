@@ -1,7 +1,7 @@
 require "spec_helper"
 
-describe ::DiscoursePoll::PollsController do
-  routes { ::DiscoursePoll::Engine.routes }
+describe ::DiscourseSignups::PollsController do
+  routes { ::DiscourseSignups::Engine.routes }
 
   let!(:user) { log_in }
   let(:topic) { Fabricate(:topic) }

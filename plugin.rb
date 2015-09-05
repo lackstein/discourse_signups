@@ -1,10 +1,10 @@
-# name: poll
-# about: Official poll plugin for Discourse
-# version: 0.9
-# authors: Vikhyat Korrapati (vikhyat), Régis Hanol (zogstrip)
-# url: https://github.com/discourse/discourse/tree/master/plugins/poll
+# name: signups
+# about: Create signup options for events
+# version: 0.1
+# authors: Noah Lackstein, based on work by Vikhyat Korrapati (vikhyat), Régis Hanol (zogstrip)
+# url: https://github.com/lackstein/discourse_signups
 
-enabled_site_setting :poll_enabled
+enabled_site_setting :signups_enabled
 
 register_asset "stylesheets/common/poll.scss"
 register_asset "stylesheets/desktop/poll.scss", :desktop
@@ -12,10 +12,10 @@ register_asset "stylesheets/mobile/poll.scss", :mobile
 
 register_asset "javascripts/poll_dialect.js", :server_side
 
-PLUGIN_NAME ||= "discourse_poll".freeze
+PLUGIN_NAME ||= "discourse_signups".freeze
 
-POLLS_CUSTOM_FIELD ||= "polls".freeze
-VOTES_CUSTOM_FIELD ||= "polls-votes".freeze
+POLLS_CUSTOM_FIELD ||= "signups".freeze
+VOTES_CUSTOM_FIELD ||= "signups-votes".freeze
 
 after_initialize do
 
@@ -24,14 +24,14 @@ after_initialize do
     fragment.css(".poll a.cast-votes, .poll a.toggle-results").each(&:remove)
   end
 
-  module ::DiscoursePoll
+  module ::DiscourseSignups
     class Engine < ::Rails::Engine
       engine_name PLUGIN_NAME
-      isolate_namespace DiscoursePoll
+      isolate_namespace DiscourseSignups
     end
   end
 
-  class DiscoursePoll::Poll
+  class DiscourseSignups::Poll
     class << self
 
       def vote(post_id, poll_name, options, user_id)
