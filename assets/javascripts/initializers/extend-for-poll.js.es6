@@ -19,7 +19,7 @@ export default {
     const messageBus = container.lookup("message-bus:main");
 
     // listen for back-end to tell us when a post has a poll
-    messageBus.subscribe("/polls", data => {
+    messageBus.subscribe("/signups", data => {
       const post = container.lookup("controller:topic").get('model.postStream').findLoadedPost(data.post_id);
       // HACK to trigger the "postViewUpdated" event
       Em.run.next(_ => post.set("cooked", post.get("cooked") + " "));

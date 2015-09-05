@@ -351,7 +351,7 @@ after_initialize do
   # tells the front-end we have a poll for that post
   on(:post_created) do |post|
     next if post.is_first_post? || post.custom_fields[POLLS_CUSTOM_FIELD].blank?
-    MessageBus.publish("/polls", { post_id: post.id })
+    MessageBus.publish("/signups", { post_id: post.id })
   end
 
   add_to_serializer(:post, :polls, false) { post_custom_fields[POLLS_CUSTOM_FIELD] }
