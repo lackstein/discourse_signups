@@ -1,0 +1,42 @@
+# encoding: utf-8
+#
+# Never edit this file. It will be overwritten when translations are pulled from Transifex.
+#
+# To work with us on translations, join this project:
+# https://www.transifex.com/projects/p/discourse-org/
+
+es:
+  js:
+    poll:
+      voters:
+        one: "votante"
+        other: "votantes"
+      total_votes:
+        one: "voto total"
+        other: "votos totales"
+      average_rating: "Puntuación media: <strong>%{average}</strong>."
+      multiple:
+        help:
+          at_least_min_options: "Debes elegir al menos <strong>%{count}</strong> opciones."
+          up_to_max_options: "Puedes escoger hasta <strong>%{count}</strong> opciones."
+          x_options: "Debes elegir <strong>%{count}</strong> opciones."
+          between_min_and_max_options: "Puedes escoger entre <strong>%{min}</strong> y <strong>%{max}</strong> opciones."
+      cast-votes:
+        title: "Votar"
+        label: "¡Vota!"
+      show-results:
+        title: "Mostrar los resultados de la encuesta"
+        label: "Mostrar resultados"
+      hide-results:
+        title: "Volver a los votos"
+        label: "Ocultar resultados"
+      open:
+        title: "Abrir encuesta"
+        label: "Abrir"
+        confirm: "¿Seguro que quieres abrir esta encuesta?"
+      close:
+        title: "Cerrar la encuesta"
+        label: "Cerrar"
+        confirm: "¿Seguro que quieres cerrar esta encuesta?"
+      error_while_toggling_status: "Ha ocurrido un error mientras se cambiaba el estado de esta encuesta."
+      error_while_casting_votes: "Ha ocurrido un error a la hora de enviar los votos."

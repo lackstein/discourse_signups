@@ -1,0 +1,13 @@
+{{#each option in options}}
+  <li>
+    <div class="option">
+      <p>
+        <span class="percentage">{{option.percentage}}%</span>
+        {{{option.html}}}
+      </p>
+    </div>
+    <div class="bar-back">
+      <div class="bar" style={{option.style}}></div>
+    </div>
+  </li>
+{{/each}}
