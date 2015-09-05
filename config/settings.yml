@@ -1,6 +1,6 @@
 plugins:
-  poll_enabled:
+  signup_enabled:
     default: true
-  poll_maximum_options:
-    default: 20
+  signup_maximum_options:
+    default: 4
     client: true

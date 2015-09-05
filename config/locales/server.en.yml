@@ -16,8 +16,8 @@
 
 en:
   site_settings:
-    poll_enabled: "Allow users to create polls?"
-    poll_maximum_options: "Maximum number of options allowed in a poll."
+    signup_enabled: "Allow users to create signups?"
+    signup_maximum_options: "Maximum number of options allowed in a signup."
 
   poll:
     multiple_polls_without_name: "There are multiple polls without a name. Use the '<code>name</code>' attribute to uniquely identify your polls."
