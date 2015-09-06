@@ -22,8 +22,8 @@ en:
         one: "rider"
         other: "riders"
       total_votes:
-        one: "total rider"
-        other: "total riders"
+        one: "total vote"
+        other: "total votes"
 
       average_rating: "Average rating: <strong>%{average}</strong>."
 
