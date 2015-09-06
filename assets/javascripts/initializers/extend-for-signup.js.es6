@@ -1,6 +1,6 @@
 import PostView from "discourse/views/post";
 
-function createPollView(container, post, signup, vote) {
+function createSignupView(container, post, signup, vote) {
   const controller = container.lookup("controller:signup", { singleton: false }),
         view = container.lookup("view:signup");
 
@@ -27,7 +27,7 @@ export default {
 
     // overwrite signups
     PostView.reopen({
-      _createPollViews: function($post) {
+      _createSignupViews: function($post) {
         const post = this.get("post"),
               signups = post.get("signups"),
               votes = post.get("signups_votes") || {};
@@ -36,7 +36,7 @@ export default {
         if (!signups) { return; }
 
         // clean-up if needed
-        this._cleanUpPollViews();
+        this._cleanUpSignupViews();
 
         const signupViews = {};
 
@@ -45,7 +45,7 @@ export default {
           const $div = $("<div>"),
                 $signup = $(this),
                 signupName = $signup.data("signup-name"),
-                signupView = createPollView(container, post, signups[signupName], votes[signupName]);
+                signupView = createSignupView(container, post, signups[signupName], votes[signupName]);
 
           $signup.replaceWith($div);
           Em.run.next(_ => signupView.renderer.replaceIn(signupView, $div[0]));
@@ -65,7 +65,7 @@ export default {
         this.set("signupViews", signupViews);
       }.on("postViewInserted", "postViewUpdated"),
 
-      _cleanUpPollViews: function() {
+      _cleanUpSignupViews: function() {
         messageBus.unsubscribe("/signups/" + this.get("post.id"));
 
         if (this.get("signupViews")) {

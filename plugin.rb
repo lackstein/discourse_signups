@@ -31,7 +31,7 @@ after_initialize do
     end
   end
 
-  class DiscourseSignups::Poll
+  class DiscourseSignups::Signup
     class << self
 
       def vote(post_id, signup_name, options, user_id)
@@ -157,7 +157,7 @@ after_initialize do
   end
 
   require_dependency "application_controller"
-  class DiscourseSignups::PollsController < ::ApplicationController
+  class DiscourseSignups::SignupsController < ::ApplicationController
     requires_plugin PLUGIN_NAME
 
     before_filter :ensure_logged_in
@@ -169,7 +169,7 @@ after_initialize do
       user_id   = current_user.id
 
       begin
-        signup, options = DiscourseSignups::Poll.vote(post_id, signup_name, options, user_id)
+        signup, options = DiscourseSignups::Signup.vote(post_id, signup_name, options, user_id)
         render json: { signup: signup, vote: options }
       rescue StandardError => e
         render_json_error e.message
@@ -183,7 +183,7 @@ after_initialize do
       user_id   = current_user.id
 
       begin
-        signup = DiscourseSignups::Poll.toggle_status(post_id, signup_name, status, user_id)
+        signup = DiscourseSignups::Signup.toggle_status(post_id, signup_name, status, user_id)
         render json: { signup: signup }
       rescue StandardError => e
         render_json_error e.message
@@ -226,7 +226,7 @@ after_initialize do
 
     signups = {}
 
-    extracted_signups = DiscourseSignups::Poll::extract(self.raw, self.topic_id)
+    extracted_signups = DiscourseSignups::Signup::extract(self.raw, self.topic_id)
 
     extracted_signups.each do |signup|
       # signups should have a unique name

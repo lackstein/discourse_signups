@@ -9,7 +9,7 @@ export default Em.View.extend({
   "data-signup-name": Em.computed.alias("signup.name"),
   "data-signup-status": Em.computed.alias("signup.status"),
 
-  _fixPollContainerHeight: function() {
+  _fixSignupContainerHeight: function() {
     const signupContainer = this.$(".signup-container");
     signupContainer.height(signupContainer.height());
   }.on("didInsertElement")
