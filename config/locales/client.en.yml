@@ -19,11 +19,11 @@ en:
   js:
     signup:
       voters:
-        one: "voter"
-        other: "voters"
+        one: "rider"
+        other: "riders"
       total_votes:
-        one: "total vote"
-        other: "total votes"
+        one: "total rider"
+        other: "total riders"
 
       average_rating: "Average rating: <strong>%{average}</strong>."
 
