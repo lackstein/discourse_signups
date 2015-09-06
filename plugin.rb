@@ -4,7 +4,7 @@
 # authors: Noah Lackstein, based on work by Vikhyat Korrapati (vikhyat), Régis Hanol (zogstrip)
 # url: https://github.com/lackstein/discourse_signups
 
-enabled_site_setting :signups_enabled
+enabled_site_setting :signup_enabled
 
 register_asset "stylesheets/common/poll.scss"
 register_asset "stylesheets/desktop/poll.scss", :desktop
