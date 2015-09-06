@@ -37,6 +37,7 @@ after_initialize do
       def vote(post_id, signup_name, options, user_id)
         DistributedMutex.synchronize("#{PLUGIN_NAME}-#{post_id}") do
           post = Post.find_by(id: post_id)
+          user = User.find_by(id: user_id)
 
           # post must not be deleted
           if post.nil? || post.trashed?
@@ -71,7 +72,10 @@ after_initialize do
 
           signup["options"].each do |option|
             option["votes"] -= 1 if vote.include?(option["id"])
+            option["voters"].reject! { |voter| voter == user.username } if vote.include?(option["id"])
+            
             option["votes"] += 1 if options.include?(option["id"])
+            option["voters"] << user.username if options.include?(option["id"])
           end
 
           votes[signup_name] = options

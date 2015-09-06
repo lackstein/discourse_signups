@@ -8,10 +8,13 @@ export default Em.Component.extend({
     this.get("signup.options").forEach(option => {
       const percentage = voters === 0 ? 0 : Math.floor(100 * option.get("votes") / voters),
             style = "width: " + percentage + "%".htmlSafe();
+            
+      const names = option.get("voters").join(', ');
 
       option.setProperties({
         percentage,
         style,
+        names,
         title: I18n.t("signup.option_title", { count: option.get("votes") })
       });
     });
