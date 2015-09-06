@@ -9,7 +9,7 @@ export default Em.Component.extend({
       const percentage = voters === 0 ? 0 : Math.floor(100 * option.get("votes") / voters),
             style = "width: " + percentage + "%".htmlSafe();
             
-      const names = option.get("voters").join(', ');
+      const names = [for (name of option.get("voters")) "<a href=\"/users/${name}\" data-auto-route=\"true\" data-user-card=\"${name}\">${name}</a>"].join(', ');
 
       option.setProperties({
         percentage,
