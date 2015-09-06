@@ -6,22 +6,22 @@
 
 enabled_site_setting :signup_enabled
 
-register_asset "stylesheets/common/poll.scss"
-register_asset "stylesheets/desktop/poll.scss", :desktop
-register_asset "stylesheets/mobile/poll.scss", :mobile
+register_asset "stylesheets/common/signup.scss"
+register_asset "stylesheets/desktop/signup.scss", :desktop
+register_asset "stylesheets/mobile/signup.scss", :mobile
 
-register_asset "javascripts/poll_dialect.js", :server_side
+register_asset "javascripts/signup_dialect.js", :server_side
 
 PLUGIN_NAME ||= "discourse_signups".freeze
 
-POLLS_CUSTOM_FIELD ||= "signups".freeze
+SIGNUPS_CUSTOM_FIELD ||= "signups".freeze
 VOTES_CUSTOM_FIELD ||= "signups-votes".freeze
 
 after_initialize do
 
   # remove "Vote Now!" & "Show Results" links in emails
   Email::Styles.register_plugin_style do |fragment|
-    fragment.css(".poll a.cast-votes, .poll a.toggle-results").each(&:remove)
+    fragment.css(".signup a.cast-votes, .signup a.toggle-results").each(&:remove)
   end
 
   module ::DiscourseSignups
@@ -34,91 +34,91 @@ after_initialize do
   class DiscourseSignups::Poll
     class << self
 
-      def vote(post_id, poll_name, options, user_id)
+      def vote(post_id, signup_name, options, user_id)
         DistributedMutex.synchronize("#{PLUGIN_NAME}-#{post_id}") do
           post = Post.find_by(id: post_id)
 
           # post must not be deleted
           if post.nil? || post.trashed?
-            raise StandardError.new I18n.t("poll.post_is_deleted")
+            raise StandardError.new I18n.t("signup.post_is_deleted")
           end
 
           # topic must be open
           if post.topic.try(:closed) || post.topic.try(:archived)
-            raise StandardError.new I18n.t("poll.topic_must_be_open_to_vote")
+            raise StandardError.new I18n.t("signup.topic_must_be_open_to_vote")
           end
 
-          polls = post.custom_fields[POLLS_CUSTOM_FIELD]
+          signups = post.custom_fields[SIGNUPS_CUSTOM_FIELD]
 
-          raise StandardError.new I18n.t("poll.no_polls_associated_with_this_post") if polls.blank?
+          raise StandardError.new I18n.t("signup.no_signups_associated_with_this_post") if signups.blank?
 
-          poll = polls[poll_name]
+          signup = signups[signup_name]
 
-          raise StandardError.new I18n.t("poll.no_poll_with_this_name", name: poll_name) if poll.blank?
-          raise StandardError.new I18n.t("poll.poll_must_be_open_to_vote") if poll["status"] != "open"
+          raise StandardError.new I18n.t("signup.no_signup_with_this_name", name: signup_name) if signup.blank?
+          raise StandardError.new I18n.t("signup.signup_must_be_open_to_vote") if signup["status"] != "open"
 
-          # remove options that aren't available in the poll
-          available_options = poll["options"].map { |o| o["id"] }.to_set
+          # remove options that aren't available in the signup
+          available_options = signup["options"].map { |o| o["id"] }.to_set
           options.select! { |o| available_options.include?(o) }
 
-          raise StandardError.new I18n.t("poll.requires_at_least_1_valid_option") if options.empty?
+          raise StandardError.new I18n.t("signup.requires_at_least_1_valid_option") if options.empty?
 
           votes = post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"] || {}
-          vote = votes[poll_name] || []
+          vote = votes[signup_name] || []
 
           # increment counters only when the user hasn't casted a vote yet
-          poll["voters"] += 1 if vote.size == 0
+          signup["voters"] += 1 if vote.size == 0
 
-          poll["options"].each do |option|
+          signup["options"].each do |option|
             option["votes"] -= 1 if vote.include?(option["id"])
             option["votes"] += 1 if options.include?(option["id"])
           end
 
-          votes[poll_name] = options
+          votes[signup_name] = options
 
-          post.custom_fields[POLLS_CUSTOM_FIELD] = polls
+          post.custom_fields[SIGNUPS_CUSTOM_FIELD] = signups
           post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"] = votes
           post.save_custom_fields(true)
 
-          MessageBus.publish("/signups/#{post_id}", { polls: polls })
+          MessageBus.publish("/signups/#{post_id}", { signups: signups })
 
-          return [poll, options]
+          return [signup, options]
         end
       end
 
-      def toggle_status(post_id, poll_name, status, user_id)
+      def toggle_status(post_id, signup_name, status, user_id)
         DistributedMutex.synchronize("#{PLUGIN_NAME}-#{post_id}") do
           post = Post.find_by(id: post_id)
 
           # post must not be deleted
           if post.nil? || post.trashed?
-            raise StandardError.new I18n.t("poll.post_is_deleted")
+            raise StandardError.new I18n.t("signup.post_is_deleted")
           end
 
           # topic must be open
           if post.topic.try(:closed) || post.topic.try(:archived)
-            raise StandardError.new I18n.t("poll.topic_must_be_open_to_toggle_status")
+            raise StandardError.new I18n.t("signup.topic_must_be_open_to_toggle_status")
           end
 
           user = User.find_by(id: user_id)
 
           # either staff member or OP
           unless user_id == post.user_id || user.try(:staff?)
-            raise StandardError.new I18n.t("poll.only_staff_or_op_can_toggle_status")
+            raise StandardError.new I18n.t("signup.only_staff_or_op_can_toggle_status")
           end
 
-          polls = post.custom_fields[POLLS_CUSTOM_FIELD]
+          signups = post.custom_fields[SIGNUPS_CUSTOM_FIELD]
 
-          raise StandardError.new I18n.t("poll.no_polls_associated_with_this_post") if polls.blank?
-          raise StandardError.new I18n.t("poll.no_poll_with_this_name", name: poll_name) if polls[poll_name].blank?
+          raise StandardError.new I18n.t("signup.no_signups_associated_with_this_post") if signups.blank?
+          raise StandardError.new I18n.t("signup.no_signup_with_this_name", name: signup_name) if signups[signup_name].blank?
 
-          polls[poll_name]["status"] = status
+          signups[signup_name]["status"] = status
 
           post.save_custom_fields(true)
 
-          MessageBus.publish("/signups/#{post_id}", { polls: polls })
+          MessageBus.publish("/signups/#{post_id}", { signups: signups })
 
-          polls[poll_name]
+          signups[signup_name]
         end
       end
 
@@ -128,30 +128,30 @@ after_initialize do
         cooked = PrettyText.cook(raw, topic_id: topic_id)
         parsed = Nokogiri::HTML(cooked)
 
-        extracted_polls = []
+        extracted_signups = []
 
-        # extract polls
-        parsed.css("div.poll").each do |p|
-          poll = { "options" => [], "voters" => 0 }
+        # extract signups
+        parsed.css("div.signup").each do |p|
+          signup = { "options" => [], "voters" => 0 }
 
           # extract attributes
           p.attributes.values.each do |attribute|
             if attribute.name.start_with?(DATA_PREFIX)
-              poll[attribute.name[DATA_PREFIX.length..-1]] = attribute.value
+              signup[attribute.name[DATA_PREFIX.length..-1]] = attribute.value
             end
           end
 
           # extract options
           p.css("li[#{DATA_PREFIX}option-id]").each do |o|
             option_id = o.attributes[DATA_PREFIX + "option-id"].value
-            poll["options"] << { "id" => option_id, "html" => o.inner_html, "votes" => 0 }
+            signup["options"] << { "id" => option_id, "html" => o.inner_html, "votes" => 0 }
           end
 
-          # add the poll
-          extracted_polls << poll
+          # add the signup
+          extracted_signups << signup
         end
 
-        extracted_polls
+        extracted_signups
       end
     end
   end
@@ -164,13 +164,13 @@ after_initialize do
 
     def vote
       post_id   = params.require(:post_id)
-      poll_name = params.require(:poll_name)
+      signup_name = params.require(:signup_name)
       options   = params.require(:options)
       user_id   = current_user.id
 
       begin
-        poll, options = DiscourseSignups::Poll.vote(post_id, poll_name, options, user_id)
-        render json: { poll: poll, vote: options }
+        signup, options = DiscourseSignups::Poll.vote(post_id, signup_name, options, user_id)
+        render json: { signup: signup, vote: options }
       rescue StandardError => e
         render_json_error e.message
       end
@@ -178,13 +178,13 @@ after_initialize do
 
     def toggle_status
       post_id   = params.require(:post_id)
-      poll_name = params.require(:poll_name)
+      signup_name = params.require(:signup_name)
       status    = params.require(:status)
       user_id   = current_user.id
 
       begin
-        poll = DiscourseSignups::Poll.toggle_status(post_id, poll_name, status, user_id)
-        render json: { poll: poll }
+        signup = DiscourseSignups::Poll.toggle_status(post_id, signup_name, status, user_id)
+        render json: { signup: signup }
       rescue StandardError => e
         render_json_error e.message
       end
@@ -193,8 +193,8 @@ after_initialize do
   end
 
   DiscourseSignups::Engine.routes.draw do
-    put "/vote" => "polls#vote"
-    put "/toggle_status" => "polls#toggle_status"
+    put "/vote" => "signups#vote"
+    put "/toggle_status" => "signups#toggle_status"
   end
 
   Discourse::Application.routes.append do
@@ -202,115 +202,115 @@ after_initialize do
   end
 
   Post.class_eval do
-    attr_accessor :polls
+    attr_accessor :signups
 
     after_save do
-      next if self.polls.blank? || !self.polls.is_a?(Hash)
+      next if self.signups.blank? || !self.signups.is_a?(Hash)
 
       post = self
-      polls = self.polls
+      signups = self.signups
 
       DistributedMutex.synchronize("#{PLUGIN_NAME}-#{post.id}") do
-        post.custom_fields[POLLS_CUSTOM_FIELD] = polls
+        post.custom_fields[SIGNUPS_CUSTOM_FIELD] = signups
         post.save_custom_fields(true)
       end
     end
   end
 
   DATA_PREFIX ||= "data-signup-".freeze
-  DEFAULT_POLL_NAME ||= "signup".freeze
+  DEFAULT_SIGNUP_NAME ||= "signup".freeze
 
-  validate(:post, :validate_polls) do
+  validate(:post, :validate_signups) do
     # only care when raw has changed!
     return unless self.raw_changed?
 
-    polls = {}
+    signups = {}
 
-    extracted_polls = DiscourseSignups::Poll::extract(self.raw, self.topic_id)
+    extracted_signups = DiscourseSignups::Poll::extract(self.raw, self.topic_id)
 
-    extracted_polls.each do |poll|
-      # polls should have a unique name
-      if polls.has_key?(poll["name"])
-        poll["name"] == DEFAULT_POLL_NAME ?
-          self.errors.add(:base, I18n.t("poll.multiple_polls_without_name")) :
-          self.errors.add(:base, I18n.t("poll.multiple_polls_with_same_name", name: poll["name"]))
+    extracted_signups.each do |signup|
+      # signups should have a unique name
+      if signups.has_key?(signup["name"])
+        signup["name"] == DEFAULT_SIGNUP_NAME ?
+          self.errors.add(:base, I18n.t("signup.multiple_signups_without_name")) :
+          self.errors.add(:base, I18n.t("signup.multiple_signups_with_same_name", name: signup["name"]))
         return
       end
 
       # options must be unique
-      if poll["options"].map { |o| o["id"] }.uniq.size != poll["options"].size
-        poll["name"] == DEFAULT_POLL_NAME ?
-          self.errors.add(:base, I18n.t("poll.default_poll_must_have_different_options")) :
-          self.errors.add(:base, I18n.t("poll.named_poll_must_have_different_options", name: poll["name"]))
+      if signup["options"].map { |o| o["id"] }.uniq.size != signup["options"].size
+        signup["name"] == DEFAULT_SIGNUP_NAME ?
+          self.errors.add(:base, I18n.t("signup.default_signup_must_have_different_options")) :
+          self.errors.add(:base, I18n.t("signup.named_signup_must_have_different_options", name: signup["name"]))
         return
       end
 
       # maximum # of options
-      if poll["options"].size > SiteSetting.signup_maximum_options
-        poll["name"] == DEFAULT_POLL_NAME ?
-          self.errors.add(:base, I18n.t("poll.default_poll_must_have_less_options", max: SiteSetting.signup_maximum_options)) :
-          self.errors.add(:base, I18n.t("poll.named_poll_must_have_less_options", name: poll["name"], max: SiteSetting.signup_maximum_options))
+      if signup["options"].size > SiteSetting.signup_maximum_options
+        signup["name"] == DEFAULT_SIGNUP_NAME ?
+          self.errors.add(:base, I18n.t("signup.default_signup_must_have_less_options", max: SiteSetting.signup_maximum_options)) :
+          self.errors.add(:base, I18n.t("signup.named_signup_must_have_less_options", name: signup["name"], max: SiteSetting.signup_maximum_options))
         return
       end
 
-      # poll with multiple choices
-      if poll["type"] == "multiple"
-        min = (poll["min"].presence || 1).to_i
-        max = (poll["max"].presence || poll["options"].size).to_i
+      # signup with multiple choices
+      if signup["type"] == "multiple"
+        min = (signup["min"].presence || 1).to_i
+        max = (signup["max"].presence || signup["options"].size).to_i
 
-        if min > max || max <= 0 || max > poll["options"].size || min >= poll["options"].size
-          poll["name"] == DEFAULT_POLL_NAME ?
-            self.errors.add(:base, I18n.t("poll.default_poll_with_multiple_choices_has_invalid_parameters")) :
-            self.errors.add(:base, I18n.t("poll.named_poll_with_multiple_choices_has_invalid_parameters", name: poll["name"]))
+        if min > max || max <= 0 || max > signup["options"].size || min >= signup["options"].size
+          signup["name"] == DEFAULT_SIGNUP_NAME ?
+            self.errors.add(:base, I18n.t("signup.default_signup_with_multiple_choices_has_invalid_parameters")) :
+            self.errors.add(:base, I18n.t("signup.named_signup_with_multiple_choices_has_invalid_parameters", name: signup["name"]))
           return
          end
       end
 
-      # store the valid poll
-      polls[poll["name"]] = poll
+      # store the valid signup
+      signups[signup["name"]] = signup
     end
 
     # are we updating a post?
     if self.id.present?
       post = self
       DistributedMutex.synchronize("#{PLUGIN_NAME}-#{post.id}") do
-        # load previous polls
-        previous_polls = post.custom_fields[POLLS_CUSTOM_FIELD] || {}
+        # load previous signups
+        previous_signups = post.custom_fields[SIGNUPS_CUSTOM_FIELD] || {}
 
-        # are the polls different?
-        if polls.keys != previous_polls.keys ||
-           polls.values.map { |p| p["options"] } != previous_polls.values.map { |p| p["options"] }
+        # are the signups different?
+        if signups.keys != previous_signups.keys ||
+           signups.values.map { |p| p["options"] } != previous_signups.values.map { |p| p["options"] }
 
           # outside of the 5-minute edit window?
           if post.created_at < 5.minutes.ago
-            # cannot add/remove/rename polls
-            if polls.keys.sort != previous_polls.keys.sort
-              post.errors.add(:base, I18n.t("poll.cannot_change_polls_after_5_minutes"))
+            # cannot add/remove/rename signups
+            if signups.keys.sort != previous_signups.keys.sort
+              post.errors.add(:base, I18n.t("signup.cannot_change_signups_after_5_minutes"))
               return
             end
 
             # deal with option changes
             if User.staff.pluck(:id).include?(post.last_editor_id)
               # staff can only edit options
-              polls.each_key do |poll_name|
-                if polls[poll_name]["options"].size != previous_polls[poll_name]["options"].size
-                  post.errors.add(:base, I18n.t("poll.staff_cannot_add_or_remove_options_after_5_minutes"))
+              signups.each_key do |signup_name|
+                if signups[signup_name]["options"].size != previous_signups[signup_name]["options"].size
+                  post.errors.add(:base, I18n.t("signup.staff_cannot_add_or_remove_options_after_5_minutes"))
                   return
                 end
               end
             else
-              # OP cannot edit poll options
-              post.errors.add(:base, I18n.t("poll.op_cannot_edit_options_after_5_minutes"))
+              # OP cannot edit signup options
+              post.errors.add(:base, I18n.t("signup.op_cannot_edit_options_after_5_minutes"))
               return
             end
           end
 
           # try to merge votes
-          polls.each_key do |poll_name|
-            next unless previous_polls.has_key?(poll_name)
+          signups.each_key do |signup_name|
+            next unless previous_signups.has_key?(signup_name)
 
             # when the # of options has changed, reset all the votes
-            if polls[poll_name]["options"].size != previous_polls[poll_name]["options"].size
+            if signups[signup_name]["options"].size != previous_signups[signup_name]["options"].size
               PostCustomField.where(post_id: post.id)
                              .where("name LIKE '#{VOTES_CUSTOM_FIELD}-%'")
                              .destroy_all
@@ -318,45 +318,45 @@ after_initialize do
               next
             end
 
-            polls[poll_name]["voters"] = previous_polls[poll_name]["voters"]
-            for o in 0...polls[poll_name]["options"].size
-              polls[poll_name]["options"][o]["votes"] = previous_polls[poll_name]["options"][o]["votes"]
+            signups[signup_name]["voters"] = previous_signups[signup_name]["voters"]
+            for o in 0...signups[signup_name]["options"].size
+              signups[signup_name]["options"][o]["votes"] = previous_signups[signup_name]["options"][o]["votes"]
             end
           end
 
-          # immediately store the polls
-          post.custom_fields[POLLS_CUSTOM_FIELD] = polls
+          # immediately store the signups
+          post.custom_fields[SIGNUPS_CUSTOM_FIELD] = signups
           post.save_custom_fields(true)
 
           # publish the changes
-          MessageBus.publish("/signups/s/#{post.id}", { polls: polls })
+          MessageBus.publish("/signups/s/#{post.id}", { signups: signups })
         end
       end
     else
-      self.polls = polls
+      self.signups = signups
     end
 
     true
   end
 
-  Post.register_custom_field_type(POLLS_CUSTOM_FIELD, :json)
+  Post.register_custom_field_type(SIGNUPS_CUSTOM_FIELD, :json)
   Post.register_custom_field_type("#{VOTES_CUSTOM_FIELD}-*", :json)
 
   TopicView.add_post_custom_fields_whitelister do |user|
-    whitelisted = [POLLS_CUSTOM_FIELD]
+    whitelisted = [SIGNUPS_CUSTOM_FIELD]
     whitelisted << "#{VOTES_CUSTOM_FIELD}-#{user.id}" if user
     whitelisted
   end
 
-  # tells the front-end we have a poll for that post
+  # tells the front-end we have a signup for that post
   on(:post_created) do |post|
-    next if post.is_first_post? || post.custom_fields[POLLS_CUSTOM_FIELD].blank?
+    next if post.is_first_post? || post.custom_fields[SIGNUPS_CUSTOM_FIELD].blank?
     MessageBus.publish("/signups", { post_id: post.id })
   end
 
-  add_to_serializer(:post, :polls, false) { post_custom_fields[POLLS_CUSTOM_FIELD] }
-  add_to_serializer(:post, :include_polls?) { post_custom_fields.present? && post_custom_fields[POLLS_CUSTOM_FIELD].present? }
+  add_to_serializer(:post, :signups, false) { post_custom_fields[SIGNUPS_CUSTOM_FIELD] }
+  add_to_serializer(:post, :include_signups?) { post_custom_fields.present? && post_custom_fields[SIGNUPS_CUSTOM_FIELD].present? }
 
-  add_to_serializer(:post, :polls_votes, false) { post_custom_fields["#{VOTES_CUSTOM_FIELD}-#{scope.user.id}"] }
-  add_to_serializer(:post, :include_polls_votes?) { scope.user && post_custom_fields.present? && post_custom_fields["#{VOTES_CUSTOM_FIELD}-#{scope.user.id}"].present? }
+  add_to_serializer(:post, :signups_votes, false) { post_custom_fields["#{VOTES_CUSTOM_FIELD}-#{scope.user.id}"] }
+  add_to_serializer(:post, :include_signups_votes?) { scope.user && post_custom_fields.present? && post_custom_fields["#{VOTES_CUSTOM_FIELD}-#{scope.user.id}"].present? }
 end

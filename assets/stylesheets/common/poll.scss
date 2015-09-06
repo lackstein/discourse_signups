@@ -6,7 +6,7 @@ $option-background: dark-light-diff($primary, $secondary, 90%, -65%);
 $option-background-selected: #dbffdb;
 $option-shadow: dark-light-diff($option-background, $primary, 10%, -10%);
 
-div.poll {
+div.signup {
 
   border: 1px solid $border-color;
 
@@ -63,7 +63,7 @@ div.poll {
     }
   }
 
-  .poll-info {
+  .signup-info {
     color: $text-color;
     text-align: center;
     vertical-align: middle;
@@ -77,7 +77,7 @@ div.poll {
     }
   }
 
-  .poll-container {
+  .signup-container {
     vertical-align: middle;
     padding: 10px;
 
@@ -86,7 +86,7 @@ div.poll {
     }
   }
 
-  .poll-buttons {
+  .signup-buttons {
     button {
       float: none;
     }

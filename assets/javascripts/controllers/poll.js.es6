@@ -1,87 +1,87 @@
 export default Ember.Controller.extend({
-  isMultiple: Ember.computed.equal("poll.type", "multiple"),
-  isNumber: Ember.computed.equal("poll.type", "number"),
-  isRandom : Ember.computed.equal("poll.order", "random"),
-  isClosed: Ember.computed.equal("poll.status", "closed"),
+  isMultiple: Ember.computed.equal("signup.type", "multiple"),
+  isNumber: Ember.computed.equal("signup.type", "number"),
+  isRandom : Ember.computed.equal("signup.order", "random"),
+  isClosed: Ember.computed.equal("signup.status", "closed"),
 
   // shows the results when
-  //   - poll is closed
+  //   - signup is closed
   //   - topic is archived/closed
   //   - user wants to see the results
   showingResults: Em.computed.or("isClosed", "post.topic.closed", "post.topic.archived", "showResults"),
 
-  showResultsDisabled: Em.computed.equal("poll.voters", 0),
+  showResultsDisabled: Em.computed.equal("signup.voters", 0),
   hideResultsDisabled: Em.computed.alias("isClosed"),
 
-  poll: function() {
-    const poll = this.get("model"),
+  signup: function() {
+    const signup = this.get("model"),
           vote = this.get("vote");
 
-    if (poll) {
-      const options = _.map(poll.get("options"), o => Em.Object.create(o));
+    if (signup) {
+      const options = _.map(signup.get("options"), o => Em.Object.create(o));
 
       if (vote) {
         options.forEach(o => o.set("selected", vote.indexOf(o.get("id")) >= 0));
       }
 
-      poll.set("options", options);
+      signup.set("options", options);
     }
 
-    return poll;
+    return signup;
   }.property("model"),
 
   selectedOptions: function() {
-    return _.map(this.get("poll.options").filterBy("selected"), o => o.get("id"));
-  }.property("poll.options.@each.selected"),
+    return _.map(this.get("signup.options").filterBy("selected"), o => o.get("id"));
+  }.property("signup.options.@each.selected"),
 
   min: function() {
-    let min = parseInt(this.get("poll.min"), 10);
+    let min = parseInt(this.get("signup.min"), 10);
     if (isNaN(min) || min < 1) { min = 1; }
     return min;
-  }.property("poll.min"),
+  }.property("signup.min"),
 
   max: function() {
-    let options = this.get("poll.options.length"),
-        max = parseInt(this.get("poll.max"), 10);
+    let options = this.get("signup.options.length"),
+        max = parseInt(this.get("signup.max"), 10);
     if (isNaN(max) || max > options) { max = options; }
     return max;
-  }.property("poll.max", "poll.options.length"),
+  }.property("signup.max", "signup.options.length"),
 
   votersText: function() {
-    return I18n.t("poll.voters", { count: this.get("poll.voters") });
-  }.property("poll.voters"),
+    return I18n.t("signup.voters", { count: this.get("signup.voters") });
+  }.property("signup.voters"),
 
   totalVotes: function() {
-    return _.reduce(this.get("poll.options"), function(total, o) {
+    return _.reduce(this.get("signup.options"), function(total, o) {
       return total + parseInt(o.get("votes"), 10);
     }, 0);
-  }.property("poll.options.@each.votes"),
+  }.property("signup.options.@each.votes"),
 
   totalVotesText: function() {
-    return I18n.t("poll.total_votes", { count: this.get("totalVotes") });
+    return I18n.t("signup.total_votes", { count: this.get("totalVotes") });
   }.property("totalVotes"),
 
   multipleHelpText: function() {
-    const options = this.get("poll.options.length"),
+    const options = this.get("signup.options.length"),
           min = this.get("min"),
           max = this.get("max");
 
     if (max > 0) {
       if (min === max) {
         if (min > 1) {
-          return I18n.t("poll.multiple.help.x_options", { count: min });
+          return I18n.t("signup.multiple.help.x_options", { count: min });
         }
       } else if (min > 1) {
         if (max < options) {
-          return I18n.t("poll.multiple.help.between_min_and_max_options", { min: min, max: max });
+          return I18n.t("signup.multiple.help.between_min_and_max_options", { min: min, max: max });
         } else {
-          return I18n.t("poll.multiple.help.at_least_min_options", { count: min });
+          return I18n.t("signup.multiple.help.at_least_min_options", { count: min });
         }
       } else if (max <= options) {
-        return I18n.t("poll.multiple.help.up_to_max_options", { count: max });
+        return I18n.t("signup.multiple.help.up_to_max_options", { count: max });
       }
     }
-  }.property("min", "max", "poll.options.length"),
+  }.property("min", "max", "signup.options.length"),
 
   canCastVotes: function() {
     if (this.get("isClosed") || this.get("showingResults") || this.get("loading")) {
@@ -118,7 +118,7 @@ export default Ember.Controller.extend({
       const wasSelected = option.get("selected");
 
       if (!this.get("isMultiple")) {
-        this.get("poll.options").forEach(o => o.set("selected", false));
+        this.get("signup.options").forEach(o => o.set("selected", false));
       }
 
       option.toggleProperty("selected");
@@ -138,14 +138,14 @@ export default Ember.Controller.extend({
         type: "PUT",
         data: {
           post_id: this.get("post.id"),
-          poll_name: this.get("poll.name"),
+          signup_name: this.get("signup.name"),
           options: this.get("selectedOptions"),
         }
       }).then(function(results) {
         self.setProperties({ vote: results.vote, showResults: true });
-        self.set("model", Em.Object.create(results.poll));
+        self.set("model", Em.Object.create(results.signup));
       }).catch(function() {
-        bootbox.alert(I18n.t("poll.error_while_casting_votes"));
+        bootbox.alert(I18n.t("signup.error_while_casting_votes"));
       }).finally(function() {
         self.set("loading", false);
       });
@@ -159,7 +159,7 @@ export default Ember.Controller.extend({
       if (!this.get("canToggleStatus")) { return; }
 
       const self = this,
-            confirm = this.get("isClosed") ? "poll.open.confirm" : "poll.close.confirm";
+            confirm = this.get("isClosed") ? "signup.open.confirm" : "signup.close.confirm";
 
       bootbox.confirm(
         I18n.t(confirm),
@@ -173,13 +173,13 @@ export default Ember.Controller.extend({
               type: "PUT",
               data: {
                 post_id: self.get("post.id"),
-                poll_name: self.get("poll.name"),
+                signup_name: self.get("signup.name"),
                 status: self.get("isClosed") ? "open" : "closed",
               }
             }).then(function(results) {
-              self.set("model", Em.Object.create(results.poll));
+              self.set("model", Em.Object.create(results.signup));
             }).catch(function() {
-              bootbox.alert(I18n.t("poll.error_while_toggling_status"));
+              bootbox.alert(I18n.t("signup.error_while_toggling_status"));
             }).finally(function() {
               self.set("loading", false);
             });

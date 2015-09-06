@@ -1,5 +1,5 @@
 # encoding: utf-8
-# This file contains content for the client portion of the poll plugin, sent out
+# This file contains content for the client portion of the signup plugin, sent out
 # to the Javascript app.
 #
 # To work with us on translations, see:
@@ -17,7 +17,7 @@
 
 en:
   js:
-    poll:
+    signup:
       voters:
         one: "voter"
         other: "voters"
@@ -39,7 +39,7 @@ en:
         label: "Vote now!"
 
       show-results:
-        title: "Display the poll results"
+        title: "Display the signup results"
         label: "Show results"
 
       hide-results:
@@ -47,14 +47,14 @@ en:
         label: "Hide results"
 
       open:
-        title: "Open the poll"
+        title: "Open the signup"
         label: "Open"
-        confirm: "Are you sure you want to open this poll?"
+        confirm: "Are you sure you want to open this signup?"
 
       close:
-        title: "Close the poll"
+        title: "Close the signup"
         label: "Close"
-        confirm: "Are you sure you want to close this poll?"
+        confirm: "Are you sure you want to close this signup?"
 
-      error_while_toggling_status: "There was an error while toggling the status of this poll."
+      error_while_toggling_status: "There was an error while toggling the status of this signup."
       error_while_casting_votes: "There was an error while casting your votes."

@@ -1,16 +1,16 @@
 export default Em.View.extend({
-  templateName: "poll",
-  classNames: ["poll"],
+  templateName: "signup",
+  classNames: ["signup"],
   attributeBindings: ["data-signup-type", "data-signup-name", "data-signup-status"],
 
-  poll: Em.computed.alias("controller.poll"),
+  signup: Em.computed.alias("controller.signup"),
 
-  "data-signup-type": Em.computed.alias("poll.type"),
-  "data-signup-name": Em.computed.alias("poll.name"),
-  "data-signup-status": Em.computed.alias("poll.status"),
+  "data-signup-type": Em.computed.alias("signup.type"),
+  "data-signup-name": Em.computed.alias("signup.name"),
+  "data-signup-status": Em.computed.alias("signup.status"),
 
   _fixPollContainerHeight: function() {
-    const pollContainer = this.$(".poll-container");
-    pollContainer.height(pollContainer.height());
+    const signupContainer = this.$(".signup-container");
+    signupContainer.height(signupContainer.height());
   }.on("didInsertElement")
 });

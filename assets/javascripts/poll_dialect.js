@@ -3,7 +3,7 @@
 (function() {
 
   var DATA_PREFIX = "data-signup-";
-  var DEFAULT_POLL_NAME = "signup";
+  var DEFAULT_SIGNUP_NAME = "signup";
 
   var WHITELISTED_ATTRIBUTES = ["type", "name", "min", "max", "step", "order", "status"];
 
@@ -36,12 +36,12 @@
         }
       }
 
-      // default poll attributes
-      var attributes = { "class": "poll" };
+      // default signup attributes
+      var attributes = { "class": "signup" };
       attributes[DATA_PREFIX + "status"] = "open";
-      attributes[DATA_PREFIX + "name"] = DEFAULT_POLL_NAME;
+      attributes[DATA_PREFIX + "name"] = DEFAULT_SIGNUP_NAME;
 
-      // extract poll attributes
+      // extract signup attributes
       (matches[1].match(ATTRIBUTES_REGEX) || []).forEach(function(m) {
         var attr = m.split("="), name = attr[0], value = attr[1];
         value = Handlebars.Utils.escapeExpression(value.replace(/["']/g, ""));
@@ -90,19 +90,19 @@
       }
 
       var result = ["div", attributes],
-          poll = ["div"];
+          signup = ["div"];
 
-      // 1 - POLL CONTAINER
-      var container = ["div", { "class": "poll-container" }].concat(contents);
-      poll.push(container);
+      // 1 - SIGNUP CONTAINER
+      var container = ["div", { "class": "signup-container" }].concat(contents);
+      signup.push(container);
 
-      // 2 - POLL INFO
-      var info = ["div", { "class": "poll-info" }];
+      // 2 - SIGNUP INFO
+      var info = ["div", { "class": "signup-info" }];
 
       // # of voters
       info.push(["p",
                   ["span", { "class": "info-number" }, "0"],
-                  ["span", { "class": "info-text"}, I18n.t("poll.voters", { count: 0 })]
+                  ["span", { "class": "info-text"}, I18n.t("signup.voters", { count: 0 })]
                 ]);
 
       // multiple help text
@@ -119,45 +119,45 @@
         if (max > 0) {
           if (min === max) {
             if (min > 1) {
-              help = I18n.t("poll.multiple.help.x_options", { count: min });
+              help = I18n.t("signup.multiple.help.x_options", { count: min });
             }
           } else if (min > 1) {
             if (max < optionCount) {
-              help = I18n.t("poll.multiple.help.between_min_and_max_options", { min: min, max: max });
+              help = I18n.t("signup.multiple.help.between_min_and_max_options", { min: min, max: max });
             } else {
-              help = I18n.t("poll.multiple.help.at_least_min_options", { count: min });
+              help = I18n.t("signup.multiple.help.at_least_min_options", { count: min });
             }
           } else if (max <= optionCount) {
-            help = I18n.t("poll.multiple.help.up_to_max_options", { count: max });
+            help = I18n.t("signup.multiple.help.up_to_max_options", { count: max });
           }
         }
 
         if (help) { info.push(["p", help]); }
       }
 
-      poll.push(info);
+      signup.push(info);
 
       // 3 - BUTTONS
-      var buttons = ["div", { "class": "poll-buttons" }];
+      var buttons = ["div", { "class": "signup-buttons" }];
 
       // add "cast-votes" button
       if (attributes[DATA_PREFIX + "type"] === "multiple") {
-        buttons.push(["a", { "class": "button cast-votes", "title": I18n.t("poll.cast-votes.title") }, I18n.t("poll.cast-votes.label")]);
+        buttons.push(["a", { "class": "button cast-votes", "title": I18n.t("signup.cast-votes.title") }, I18n.t("signup.cast-votes.label")]);
       }
 
       // add "toggle-results" button
-      buttons.push(["a", { "class": "button toggle-results", "title": I18n.t("poll.show-results.title") }, I18n.t("poll.show-results.label")]);
+      buttons.push(["a", { "class": "button toggle-results", "title": I18n.t("signup.show-results.title") }, I18n.t("signup.show-results.label")]);
 
       // 4 - MIX IT ALL UP
-      result.push(poll);
+      result.push(signup);
       result.push(buttons);
 
       return result;
     }
   });
 
-  Discourse.Markdown.whiteListTag("div", "class", "poll");
-  Discourse.Markdown.whiteListTag("div", "class", /^poll-(info|container|buttons)/);
+  Discourse.Markdown.whiteListTag("div", "class", "signup");
+  Discourse.Markdown.whiteListTag("div", "class", /^signup-(info|container|buttons)/);
   Discourse.Markdown.whiteListTag("div", "data-*");
 
   Discourse.Markdown.whiteListTag("span", "class", /^info-(number|text)/);

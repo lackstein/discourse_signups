@@ -3,20 +3,20 @@ export default Em.Component.extend({
   classNames: ["results"],
 
   options: function() {
-    const voters = this.get("poll.voters");
+    const voters = this.get("signup.voters");
 
-    this.get("poll.options").forEach(option => {
+    this.get("signup.options").forEach(option => {
       const percentage = voters === 0 ? 0 : Math.floor(100 * option.get("votes") / voters),
             style = "width: " + percentage + "%".htmlSafe();
 
       option.setProperties({
         percentage,
         style,
-        title: I18n.t("poll.option_title", { count: option.get("votes") })
+        title: I18n.t("signup.option_title", { count: option.get("votes") })
       });
     });
 
-    return this.get("poll.options");
-  }.property("poll.voters", "poll.options.[]")
+    return this.get("signup.options");
+  }.property("signup.voters", "signup.options.[]")
 
 });
