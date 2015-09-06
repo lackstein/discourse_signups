@@ -148,7 +148,7 @@ after_initialize do
           # extract options
           p.css("li[#{DATA_PREFIX}option-id]").each do |o|
             option_id = o.attributes[DATA_PREFIX + "option-id"].value
-            signup["options"] << { "id" => option_id, "html" => o.inner_html, "votes" => 0 }
+            signup["options"] << { "id" => option_id, "html" => o.inner_html, "votes" => 0, "voters" => [] }
           end
 
           # add the signup
