@@ -10,7 +10,7 @@ export default Em.Component.extend({
             style = "width: " + percentage + "%".htmlSafe();
             
       const names = option.get("voters").map(
-          user => "<a href=\"/users/" + user + "\" data-auto-route=\"true\" data-user-card=\"" + user + "\" class=\"username trigger-user-card\">" + user + "</a>"
+          user => "<span class=\"username\"><a data-user-card=\"" + user + "\" class=\"trigger-user-card\">" + user + "</a></span>"
       ).join(', ');
 
       option.setProperties({
