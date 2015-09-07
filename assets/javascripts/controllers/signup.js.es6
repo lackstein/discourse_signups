@@ -3,7 +3,6 @@ export default Ember.Controller.extend({
   isNumber: Ember.computed.equal("signup.type", "number"),
   isRandom : Ember.computed.equal("signup.order", "random"),
   isClosed: Ember.computed.equal("signup.status", "closed"),
-  showResults: Ember.computed.gt("numSelectedOptions", 0),
 
   // shows the results when
   //   - signup is closed
@@ -33,10 +32,6 @@ export default Ember.Controller.extend({
 
   selectedOptions: function() {
     return _.map(this.get("signup.options").filterBy("selected"), o => o.get("id"));
-  }.property("signup.options.@each.selected"),
-  
-  numSelectedOptions: function() {
-    return this.get("signup.options").filterBy("selected").length;
   }.property("signup.options.@each.selected"),
 
   min: function() {
