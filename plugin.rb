@@ -83,6 +83,9 @@ after_initialize do
           post.custom_fields[SIGNUPS_CUSTOM_FIELD] = signups
           post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"] = votes
           post.save_custom_fields(true)
+          
+          # Automatically subscribe the voter to notifications about the event
+          # TopicUser.change(user, post.topic.id, notification_level: TopicUser.notification_levels[:watching])
 
           MessageBus.publish("/signups/#{post_id}", { signups: signups })
 
