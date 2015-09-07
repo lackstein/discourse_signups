@@ -6,6 +6,10 @@ $option-background: dark-light-diff($primary, $secondary, 90%, -65%);
 $option-background-selected: #dbffdb;
 $option-shadow: dark-light-diff($option-background, $primary, 10%, -10%);
 
+.wmd-signup-button:before {
+  content: "\f271";
+}
+
 div.signup {
 
   border: 1px solid $border-color;
