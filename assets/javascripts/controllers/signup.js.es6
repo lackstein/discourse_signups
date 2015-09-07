@@ -35,7 +35,9 @@ export default Ember.Controller.extend({
     return _.map(this.get("signup.options").filterBy("selected"), o => o.get("id"));
   }.property("signup.options.@each.selected"),
   
-  numSelectedOptions: this.get("signup.options").filterBy("selected").length,
+  numSelectedOptions: function() {
+    return this.get("signup.options").filterBy("selected").length;
+  },
 
   min: function() {
     let min = parseInt(this.get("signup.min"), 10);
