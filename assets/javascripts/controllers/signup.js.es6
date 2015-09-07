@@ -3,12 +3,13 @@ export default Ember.Controller.extend({
   isNumber: Ember.computed.equal("signup.type", "number"),
   isRandom : Ember.computed.equal("signup.order", "random"),
   isClosed: Ember.computed.equal("signup.status", "closed"),
+  hasVoted: Ember.computed.gt("numSelectedOptions", 0),
 
   // shows the results when
   //   - signup is closed
   //   - topic is archived/closed
   //   - user wants to see the results
-  showingResults: Em.computed.or("isClosed", "post.topic.closed", "post.topic.archived", "showResults"),
+  showingResults: Em.computed.or("isClosed", "post.topic.closed", "post.topic.archived", "showResults", "hasVoted"),
 
   showResultsDisabled: Em.computed.equal("signup.voters", 0),
   hideResultsDisabled: Em.computed.alias("isClosed"),
@@ -33,6 +34,8 @@ export default Ember.Controller.extend({
   selectedOptions: function() {
     return _.map(this.get("signup.options").filterBy("selected"), o => o.get("id"));
   }.property("signup.options.@each.selected"),
+  
+  numSelectedOptions: this.get("signup.options").filterBy("selected").length,
 
   min: function() {
     let min = parseInt(this.get("signup.min"), 10);
