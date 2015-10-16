@@ -179,7 +179,7 @@ after_initialize do
     def vote
       post_id   = params.require(:post_id)
       signup_name = params.require(:signup_name)
-      options   = params.permit(:options).empty? ? [] : params.permit(:options)
+      options   = params.permit(:options)
       user_id   = current_user.id
       
       logger.error "SIGNUP ERROR: #{options.inspect}"
