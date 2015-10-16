@@ -179,7 +179,8 @@ after_initialize do
     def vote
       post_id   = params.require(:post_id)
       signup_name = params.require(:signup_name)
-      options   = params.permit(:options) || []
+      options   = params.permit(:options)
+      options   = {} if options.empty?
       user_id   = current_user.id
       
       begin
