@@ -68,7 +68,7 @@ after_initialize do
           vote = votes[signup_name] || []
 
           # increment counters only when the user hasn't casted a vote yet
-          signup["voters"] += 1 if vote.size == 0
+          signup["voters"] += 1 if vote.size == 0 && !options.empty?
           # Decrement when cancelling a vote
           signup["voters"] -= 1 if vote.size != 0 && options.empty?
 
@@ -181,6 +181,8 @@ after_initialize do
       signup_name = params.require(:signup_name)
       options   = params.permit(:options).empty? ? [] : params.permit(:options)
       user_id   = current_user.id
+      
+      logger.error "SIGNUP ERROR: #{options.inspect}"
       
       begin
         signup, options = DiscourseSignups::Signup.vote(post_id, signup_name, options, user_id)
