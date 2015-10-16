@@ -85,7 +85,7 @@ after_initialize do
             option["votes"] += 1 if options.include?(option["id"])
             
             # Rebuild list of users that have voted for this option
-            option["voters"] = signup_votes.select { |ballot| ballot[:votes].include? option["id"] }.map { |ballot| ballot[:user].username }
+            option["voters"] = signup_votes.select { |ballot| ballot[:votes].include? option["id"] }.map { |ballot| ballot[:user].username } rescue []
           end
 
           post.custom_fields[SIGNUPS_CUSTOM_FIELD] = signups
@@ -180,7 +180,7 @@ after_initialize do
       post_id   = params.require(:post_id)
       signup_name = params.require(:signup_name)
       options   = params.permit(:options)
-      options   = {} if options.empty?
+      options   = [] if options.empty?
       user_id   = current_user.id
       
       begin
