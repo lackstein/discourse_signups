@@ -72,6 +72,7 @@ after_initialize do
           # Decrement when cancelling a vote
           signup["voters"] -= 1 if vote.size != 0 && options.blank?
 
+          votes[signup_name] = options
           post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"] = votes
           
           all_votes = post.custom_fields.select { |field| field =~ /^#{VOTES_CUSTOM_FIELD}-\d+/ }
@@ -86,8 +87,6 @@ after_initialize do
             # Rebuild list of users that have voted for this option
             option["voters"] = signup_votes.select { |ballot| ballot[:votes].include? option["id"] }.map { |ballot| ballot[:user].username }
           end
-
-          votes[signup_name] = options
 
           post.custom_fields[SIGNUPS_CUSTOM_FIELD] = signups
           post.save_custom_fields(true)
