@@ -70,7 +70,7 @@ after_initialize do
           # increment counters only when the user hasn't casted a vote yet
           signup["voters"] += 1 if vote.size == 0
           # Decrement when cancelling a vote
-          signup["voters"] -= 1 if vote.size != 0 && options.blank?
+          signup["voters"] -= 1 if vote.size != 0 && options.empty?
 
           votes[signup_name] = options
           post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"] = votes
@@ -179,8 +179,7 @@ after_initialize do
     def vote
       post_id   = params.require(:post_id)
       signup_name = params.require(:signup_name)
-      options   = params.permit(:options)
-      options   = [] if options.empty?
+      options   = params.permit(:options).empty? ? [] : params.permit(:options)
       user_id   = current_user.id
       
       begin
