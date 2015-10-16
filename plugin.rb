@@ -62,7 +62,7 @@ after_initialize do
           available_options = signup["options"].map { |o| o["id"] }.to_set
           options.select! { |o| available_options.include?(o) }
 
-          raise StandardError.new I18n.t("signup.requires_at_least_1_valid_option") if options.empty?
+          #raise StandardError.new I18n.t("signup.requires_at_least_1_valid_option") if options.empty?
 
           votes = post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"] || {}
           vote = votes[signup_name] || []
