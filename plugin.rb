@@ -180,9 +180,9 @@ after_initialize do
     def vote
       post_id   = params.require(:post_id)
       signup_name = params.require(:signup_name)
-      options   = params.require(:options)
+      options   = params.permit(:options) || []
       user_id   = current_user.id
-
+      
       begin
         signup, options = DiscourseSignups::Signup.vote(post_id, signup_name, options, user_id)
         render json: { signup: signup, vote: options }

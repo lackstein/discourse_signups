@@ -133,7 +133,7 @@ export default Ember.Controller.extend({
       const self = this;
 
       this.set("loading", true);
-
+      
       Discourse.ajax("/signups/vote", {
         type: "PUT",
         data: {
