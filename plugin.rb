@@ -187,7 +187,7 @@ after_initialize do
         signup, options = DiscourseSignups::Signup.vote(post_id, signup_name, options, user_id)
         render json: { signup: signup, vote: options }
       rescue StandardError => e
-        logger.debug "SIGNUP ERROR: #{e.message}"
+        logger.error "SIGNUP ERROR: #{e.message}"
         render_json_error e.message
       end
     end
