@@ -72,18 +72,24 @@ after_initialize do
           # Decrement when cancelling a vote
           signup["voters"] -= 1 if vote.size != 0 && options.blank?
 
+          post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"] = votes
+          
+          all_votes = post.custom_fields.select { |field| field =~ /^#{VOTES_CUSTOM_FIELD}-\d+/ }
+          signup_votes = all_votes.map { |voter, signup_sheets| { user: User.find(voter.split("-").last), votes: signup_sheets[signup_name] } }
+
           signup["options"].each do |option|
+            # Decrement counter if user had previously chosen this option
             option["votes"] -= 1 if vote.include?(option["id"])
-            option["voters"].reject! { |voter| voter == user.username } if vote.include?(option["id"])
-            
+            # (Re)increment counter if user (still) chose this option
             option["votes"] += 1 if options.include?(option["id"])
-            option["voters"] << user.username if options.include?(option["id"])
+            
+            # Rebuild list of users that have voted for this option
+            option["voters"] = signup_votes.select { |ballot| ballot[:votes].include? option["id"] }.map { |ballot| ballot[:user].username }
           end
 
           votes[signup_name] = options
 
           post.custom_fields[SIGNUPS_CUSTOM_FIELD] = signups
-          post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"] = votes
           post.save_custom_fields(true)
           
           # Automatically subscribe the voter to notifications about the event
