@@ -89,7 +89,7 @@ after_initialize do
           end
           
           # Remove vote if empty
-          post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"].deleteIf { |key, value| value.empty? }
+          post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"].delete_if { |key, value| value.empty? }
           post.custom_fields.delete("#{VOTES_CUSTOM_FIELD}-#{user_id}") if post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"].empty?
           
           post.custom_fields[SIGNUPS_CUSTOM_FIELD] = signups
