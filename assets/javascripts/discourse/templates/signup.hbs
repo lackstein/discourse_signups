@@ -1,20 +1,12 @@
 <div>
   <div class="signup-container">
-    {# {{#if showingResults}}
-      {{#if isNumber}}
-        {{signup-results-number signup=signup}}
-      {{else}}
-        {{signup-results-standard signup=signup}}
-      {{/if}}
-    {{else}} #}
       <ul>
         {{#each option in signup.options}}
           {{signup-option option=option toggle="toggleOption"}}
-          <p>{{{option.names}}}</p>
+          {{signup-names opttion=option }}
           <hr />
         {{/each}}
       </ul>
-    {# {{/if}} #}
   </div>
   <div class="signup-info">
     <p>
@@ -22,14 +14,11 @@
       <span class="info-text">{{votersText}}</span>
     </p>
     {{#if isMultiple}}
-      {# {{#if showingResults}} #}
         <p>
           <span class="info-number">{{totalVotes}}</span>
           <span class="info-text">{{totalVotesText}}</span>
         </p>
-      {# {{else}} #}
         <p>{{{multipleHelpText}}}</p>
-      {# {{/if}} #}
     {{/if}}
   </div>
 </div>
@@ -38,12 +27,6 @@
   {{#if isMultiple}}
     {{d-button class="cast-votes" title="signup.cast-votes.title" label="signup.cast-votes.label" disabled=castVotesDisabled action="castVotes"}}
   {{/if}}
-
-  {# {{#if showingResults}}
-    {{d-button class="toggle-results" title="signup.hide-results.title" label="signup.hide-results.label" icon="eye-slash" disabled=hideResultsDisabled action="toggleResults"}}
-  {{else}}
-    {{d-button class="toggle-results" title="signup.show-results.title" label="signup.show-results.label" icon="eye" disabled=showResultsDisabled action="toggleResults"}}
-  {{/if}} #}
 
   {{#if canToggleStatus}}
     {{#if isClosed}}

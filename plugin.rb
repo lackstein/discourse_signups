@@ -87,7 +87,11 @@ after_initialize do
             # Rebuild list of users that have voted for this option
             option["voters"] = signup_votes.select { |ballot| ballot[:votes].include? option["id"] }.map { |ballot| ballot[:user].username } rescue []
           end
-
+          
+          # Remove vote if empty
+          post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"].deleteIf { |key, value| value.empty? }
+          post.custom_fields.delete("#{VOTES_CUSTOM_FIELD}-#{user_id}") if post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"].empty?
+          
           post.custom_fields[SIGNUPS_CUSTOM_FIELD] = signups
           post.save_custom_fields(true)
           
