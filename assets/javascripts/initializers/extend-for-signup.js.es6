@@ -17,15 +17,13 @@ export default {
 
   initialize(container) {
     // Add button to markdown editor
-    const composer = container.lookup("controller:composer");
     onToolbarCreate(toolbar => {
       toolbar.addButton({
-        id: 'wmd-signup-button',
+        id: 'signup-button',
         group: "extras",
+        icon: "calendar-o"
         description: 'Add a signup form to your post',
-        execute: function() {
-          return composer.appendTextAtCursor("\n[signup type=multiple]\n- option 1\n- option 2\n[/signup]\n");
-        }
+        perform: e => e.addText("\n[signup type=multiple]\n- option 1\n- option 2\n[/signup]\n")
       });
     });
 
