@@ -36,7 +36,7 @@ after_initialize do
 
       def vote(post_id, signup_name, options, user_id, logger)
         DistributedMutex.synchronize("#{PLUGIN_NAME}-#{post_id}") do
-          logger.error "SIGNUP OPTIONS (#vote): #{options.inspect}"
+          logger.error "SIGNUP OPTIONS (#vote top): #{options.inspect}"
           
           post = Post.find_by(id: post_id)
           user = User.find_by(id: user_id)
@@ -63,11 +63,14 @@ after_initialize do
           # remove options that aren't available in the signup
           available_options = signup["options"].map { |o| o["id"] }.to_set
           options.select! { |o| available_options.include?(o) }
-
+          logger.error "SIGNUP OPTIONS (#vote check available): #{options.inspect}"
+          
           #raise StandardError.new I18n.t("signup.requires_at_least_1_valid_option") if options.empty?
 
           votes = post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"] || {}
+          logger.error "SIGNUP OPTIONS (#vote before set): #{options.inspect}"
           votes[signup_name] = options
+          logger.error "SIGNUP OPTIONS (#vote after set): #{votes[signup_name].inspect}"
           post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"] = votes
           vote = votes[signup_name]
           
