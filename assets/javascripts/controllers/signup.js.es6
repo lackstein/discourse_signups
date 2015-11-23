@@ -84,7 +84,7 @@ export default Ember.Controller.extend({
   }.property("min", "max", "signup.options.length"),
 
   canCastVotes: function() {
-    if (this.get("isClosed") || this.get("showingResults") || this.get("loading")) {
+    if (this.get("isClosed") || this.get("loading")) {
       return false;
     }
 
@@ -142,7 +142,7 @@ export default Ember.Controller.extend({
           options: this.get("selectedOptions"),
         }
       }).then(function(results) {
-        self.setProperties({ vote: results.vote, showResults: true });
+        self.setProperties({ vote: results.vote });
         self.set("model", Em.Object.create(results.signup));
       }).catch(function() {
         bootbox.alert(I18n.t("signup.error_while_casting_votes"));
