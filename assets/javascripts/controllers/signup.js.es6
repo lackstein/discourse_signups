@@ -123,7 +123,7 @@ export default Ember.Controller.extend({
 
       option.toggleProperty("selected");
 
-      if (!this.get("isMultiple") && !wasSelected) { this.send("castVotes"); }
+      //if (!this.get("isMultiple") && !wasSelected) { this.send("castVotes"); }
     },
 
     castVotes() {
