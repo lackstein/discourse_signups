@@ -89,8 +89,8 @@ after_initialize do
           end
           
           # Remove vote if empty
-          post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"].delete_if { |key, value| value.empty? }
-          post.custom_fields.delete("#{VOTES_CUSTOM_FIELD}-#{user_id}") if post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"].empty?
+          votes.delete_if { |key, value| value.empty? }
+          post.custom_fields.delete("#{VOTES_CUSTOM_FIELD}-#{user_id}") if votes.empty? && !post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"].nil?
           
           post.custom_fields[SIGNUPS_CUSTOM_FIELD] = signups
           post.save_custom_fields(true)
@@ -187,7 +187,7 @@ after_initialize do
       options   = params.permit(options: [])
       user_id   = current_user.id
       
-      logger.error "SIGNUP ERROR: #{options.inspect}"
+      logger.error "SIGNUP OPTIONS: #{options.inspect}"
       
       begin
         signup, options = DiscourseSignups::Signup.vote(post_id, signup_name, options, user_id)
