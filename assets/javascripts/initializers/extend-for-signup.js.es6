@@ -21,7 +21,7 @@ export default {
       toolbar.addButton({
         id: 'signup-button',
         group: "extras",
-        icon: "calendar-o"
+        icon: "calendar-o",
         description: 'Add a signup form to your post',
         perform: e => e.addText("\n[signup type=multiple]\n- option 1\n- option 2\n[/signup]\n")
       });
