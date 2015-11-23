@@ -36,6 +36,8 @@ after_initialize do
 
       def vote(post_id, signup_name, options, user_id)
         DistributedMutex.synchronize("#{PLUGIN_NAME}-#{post_id}") do
+          logger.error "SIGNUP OPTIONS (#vote): #{options.inspect}"
+          
           post = Post.find_by(id: post_id)
           user = User.find_by(id: user_id)
 
@@ -89,8 +91,8 @@ after_initialize do
           end
           
           # Remove vote if empty
-          # votes.delete_if { |key, value| value.empty? }
-          # post.custom_fields.delete("#{VOTES_CUSTOM_FIELD}-#{user_id}") if votes.empty? && !post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"].nil?
+          votes.delete_if { |key, value| value.empty? }
+          post.custom_fields.delete("#{VOTES_CUSTOM_FIELD}-#{user_id}") if votes.empty? && !post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"].nil?
           
           post.custom_fields[SIGNUPS_CUSTOM_FIELD] = signups
           post.save_custom_fields(true)
@@ -183,11 +185,11 @@ after_initialize do
     def vote
       post_id   = params.require(:post_id)
       signup_name = params.require(:signup_name)
-      # params[:options] ||= []
+      params[:options] ||= []
       options   = params.permit(options: [])
       user_id   = current_user.id
       
-      logger.error "SIGNUP OPTIONS: #{options.inspect}"
+      logger.error "SIGNUP OPTIONS (Controller): #{options.inspect}"
       
       begin
         signup, options = DiscourseSignups::Signup.vote(post_id, signup_name, options, user_id)
