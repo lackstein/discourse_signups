@@ -34,7 +34,7 @@ after_initialize do
   class DiscourseSignups::Signup
     class << self
 
-      def vote(post_id, signup_name, options, user_id)
+      def vote(post_id, signup_name, options, user_id, logger)
         DistributedMutex.synchronize("#{PLUGIN_NAME}-#{post_id}") do
           logger.error "SIGNUP OPTIONS (#vote): #{options.inspect}"
           
@@ -192,7 +192,7 @@ after_initialize do
       logger.error "SIGNUP OPTIONS (Controller): #{options.inspect}"
       
       begin
-        signup, options = DiscourseSignups::Signup.vote(post_id, signup_name, options, user_id)
+        signup, options = DiscourseSignups::Signup.vote(post_id, signup_name, options, user_id, logger)
         render json: { signup: signup, vote: options }
       rescue StandardError => e
         logger.error "SIGNUP ERROR: #{e.message}"
