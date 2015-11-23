@@ -119,13 +119,9 @@ export default Ember.Controller.extend({
 
       if (!this.get("isMultiple")) {
         this.get("signup.options").forEach(o => o.set("selected", false));
-        // The line above just toggled the clicked option
-        // If we don't toggle the option again, then the toggle below will force
-        // the clicked option to stay permanently on for single-choice signups
-        option.toggleProperty("selected");
       }
 
-      option.toggleProperty("selected");
+      option.set("selected", !wasSelected);
 
       //if (!this.get("isMultiple") && !wasSelected) { this.send("castVotes"); }
     },
