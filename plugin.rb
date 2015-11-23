@@ -67,15 +67,16 @@ after_initialize do
           #raise StandardError.new I18n.t("signup.requires_at_least_1_valid_option") if options.empty?
 
           votes = post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"] || {}
-          vote = votes[signup_name] || []
+          votes[signup_name] = options
+          post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"] = votes
+          vote = votes[signup_name]
+          
+          logger.error "SIGNUP FIELD (#vote): #{post.custom_fields.inspect}"
 
           # increment counters only when the user hasn't casted a vote yet
           signup["voters"] += 1 if vote.size == 0 && !options.empty?
           # Decrement when cancelling a vote
           signup["voters"] -= 1 if vote.size != 0 && options.empty?
-
-          votes[signup_name] = options
-          post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"] = votes
           
           all_votes = post.custom_fields.select { |field| field =~ /^#{VOTES_CUSTOM_FIELD}-\d+/ }
           signup_votes = all_votes.map { |voter, signup_sheets| { user: User.find(voter.split("-").last), votes: signup_sheets[signup_name] } }
@@ -92,7 +93,7 @@ after_initialize do
           
           # Remove vote if empty
           votes.delete_if { |key, value| value.empty? }
-          post.custom_fields.delete("#{VOTES_CUSTOM_FIELD}-#{user_id}") if votes.empty? && !post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"].nil?
+          post.custom_fields.delete("#{VOTES_CUSTOM_FIELD}-#{user_id}") if !post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"].nil? && votes.empty?
           
           post.custom_fields[SIGNUPS_CUSTOM_FIELD] = signups
           post.save_custom_fields(true)
