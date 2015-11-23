@@ -183,8 +183,8 @@ after_initialize do
     def vote
       post_id   = params.require(:post_id)
       signup_name = params.require(:signup_name)
-      params[:options] ||= {"options" => []}
-      options   = params.permit(options: [])["options"]
+      options   = params.permit(options: [])
+      options   = options.empty? [] : options["options"]
       user_id   = current_user.id
       
       logger.error "SIGNUP OPTIONS (Controller): #{options.inspect}"
