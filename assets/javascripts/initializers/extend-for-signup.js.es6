@@ -1,4 +1,5 @@
 import PostView from "discourse/views/post";
+import { onToolbarCreate } from 'discourse/components/d-editor';
 
 function createSignupView(container, post, signup, vote) {
   const controller = container.lookup("controller:signup", { singleton: false }),
@@ -16,14 +17,17 @@ export default {
 
   initialize(container) {
     // Add button to markdown editor
-    // const composer = container.lookup("controller:composer");
-    // window.PagedownCustom.appendButtons.push({
-    //   id: 'wmd-signup-button',
-    //   description: 'Add a signup form to your post',
-    //   execute: function() {
-    //     return composer.appendTextAtCursor("\n[signup type=multiple]\n- option 1\n- option 2\n[/signup]\n");
-    //   }
-    // });
+    const composer = container.lookup("controller:composer");
+    onToolbarCreate(toolbar => {
+      toolbar.addButton({
+        id: 'wmd-signup-button',
+        group: "extras",
+        description: 'Add a signup form to your post',
+        execute: function() {
+          return composer.appendTextAtCursor("\n[signup type=multiple]\n- option 1\n- option 2\n[/signup]\n");
+        }
+      });
+    });
 
     const messageBus = container.lookup("message-bus:main");
 
