@@ -27,7 +27,7 @@
   {{d-button class="cast-votes" title="signup.cast-votes.title" label="signup.cast-votes.label" disabled=castVotesDisabled action="castVotes"}}
 
   {{#if canToggleStatus}}
-      <a class='btn btn-primary new-private-message' {{action "composeMessage"}}>{{fa-icon "envelope"}}Message</a>&nbsp;
+      <a class='btn btn-primary toggle-status new-private-message' {{action "composeMessage"}}>{{fa-icon "envelope"}}Message</a>&nbsp;
     {{#if isClosed}}
       {{d-button class="toggle-status" title="signup.open.title" label="signup.open.label" icon="unlock-alt" action="toggleStatus"}}
     {{else}}
