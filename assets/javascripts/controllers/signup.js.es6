@@ -119,13 +119,13 @@ export default Ember.Controller.extend({
   actions: {
 
     composeMessage() {
-      const Composer = require('discourse/models/composer').default;      
+      const Composer = require('discourse/models/composer').default;
+      
       return this.controllerFor('composer').open({
         action: Composer.PRIVATE_MESSAGE,
         usernames: this.get("attendees"),
         archetypeId: 'private_message',
-        draftKey: 'new_private_message',
-        reply: reply
+        draftKey: 'new_private_message'
       });
     },
     
