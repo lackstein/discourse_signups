@@ -29,7 +29,14 @@ export default Ember.Controller.extend({
 
     return signup;
   }.property("model"),
-
+  
+  attendees: function() {
+    let list = [];
+    this.get("signup.options").forEach(option => 
+      option.get("voters").forEach(voter => list.push(voter))
+    );
+  }.property("signup.options.@each.voters"),
+  
   selectedOptions: function() {
     return _.map(this.get("signup.options").filterBy("selected"), o => o.get("id"));
   }.property("signup.options.@each.selected"),
@@ -111,6 +118,19 @@ export default Ember.Controller.extend({
 
   actions: {
 
+    composeMessage() {
+      const Composer = require('discourse/models/composer').default;
+      recipients = this.get("signup.options").map(option =>)
+      
+      return this.controllerFor('composer').open({
+        action: Composer.PRIVATE_MESSAGE,
+        usernames: this.get("attendees"),
+        archetypeId: 'private_message',
+        draftKey: 'new_private_message',
+        reply: reply
+      });
+    },
+    
     toggleOption(option) {
       if (this.get("isClosed")) { return; }
       if (!this.currentUser) { return this.send("showLogin"); }
