@@ -35,6 +35,7 @@ export default Ember.Controller.extend({
     this.get("signup.options").forEach(option => 
       option.get("voters").forEach(voter => list.push(voter))
     );
+    console.log(list);
     return list;
   }.property("signup.options.@each.voters"),
   
