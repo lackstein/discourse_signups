@@ -35,8 +35,8 @@ export default Ember.Controller.extend({
     this.get("signup.options").forEach(option => 
       option.get("voters").forEach(voter => list.push(voter))
     );
-    console.log(list);
-    return list;
+    console.log(list.uniq());
+    return list.uniq();
   }.property("signup.options.@each.voters"),
   
   selectedOptions: function() {
@@ -127,7 +127,8 @@ export default Ember.Controller.extend({
         action: Composer.PRIVATE_MESSAGE,
         usernames: this.get("attendees"),
         archetypeId: 'private_message',
-        draftKey: 'new_private_message'
+        draftKey: 'new_private_message',
+        reply: ''
       });
     },
     
