@@ -119,9 +119,7 @@ export default Ember.Controller.extend({
   actions: {
 
     composeMessage() {
-      const Composer = require('discourse/models/composer').default;
-      recipients = this.get("signup.options").map(option =>)
-      
+      const Composer = require('discourse/models/composer').default;      
       return this.controllerFor('composer').open({
         action: Composer.PRIVATE_MESSAGE,
         usernames: this.get("attendees"),
