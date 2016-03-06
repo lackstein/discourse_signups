@@ -1,4 +1,7 @@
 import PostView from "discourse/views/post";
+import TopicController from "discourse/controllers/topic";
+import Post from "discourse/models/post";
+
 import { on } from "ember-addons/ember-computed-decorators";
 import { onToolbarCreate } from 'discourse/components/d-editor';
 
@@ -7,7 +10,7 @@ function createSignupView(container, post, signup, vote) {
         view = container.lookup("view:signup");
 
   controller.set("vote", vote);
-  controller.setProperties({ model: Em.Object.create(signup), post });
+  controller.setProperties({ model: signup, post });
   view.set("controller", controller);
 
   return view;
@@ -28,13 +31,39 @@ export default {
       });
     });
 
-    const messageBus = container.lookup("message-bus:main");
+    Post.reopen({
+      // we need a proper ember object so it is bindable
+      signupsChanged: function(){
+        const signups  = this.get("signups");
+        if (signups) {
+          this._signups = this._signups || {};
+          _.map(signups, (v,k) => {
+            const existing = this._signups[k];
+            if (existing) {
+              this._signups[k].setProperties(v);
+            } else {
+              this._signups[k] = Em.Object.create(v);
+            }
+          });
+          this.set("signupsObject", this._signups);
+        }
+      }.observes("signups")
+    });
 
-    // listen for back-end to tell us when a post has a signup
-    messageBus.subscribe("/signups", data => {
-      const post = container.lookup("controller:topic").get('model.postStream').findLoadedPost(data.post_id);
-      // HACK to trigger the "postViewUpdated" event
-      Em.run.next(() => post.set("cooked", post.get("cooked") + " "));
+    TopicController.reopen({
+      subscribe(){
+          this._super();
+          this.messageBus.subscribe("/signups/" + this.get("model.id"), msg => {
+            const post = this.get('model.postStream').findLoadedPost(msg.post_id);
+            if (post) {
+              post.set('signups', msg.signups);
+            }
+        });
+      },
+      unsubscribe(){
+        this.messageBus.unsubscribe('/signups/*');
+        this._super();
+      }
     });
 
     // overwrite signups
@@ -42,8 +71,10 @@ export default {
       @on("postViewInserted", "postViewUpdated")
       _createSignupViews($post) {
         const post = this.get("post"),
-              signups = post.get("signups"),
               votes = post.get("signups_votes") || {};
+
+        post.signupsChanged();
+        const signups = post.get("signupsObject");
 
         // don't even bother when there's no signup
         if (!signups) { return; }
@@ -65,23 +96,11 @@ export default {
           signupViews[signupName] = signupView;
         });
 
-        messageBus.subscribe(`/signups/${this.get("post.id")}`, results => {
-          if (results && results.signups) {
-            _.forEach(results.signups, signup => {
-              if (signupViews[signup.name]) {
-                signupViews[signup.name].get("controller").set("model", Em.Object.create(signup));
-              }
-            });
-          }
-        });
-
         this.set("signupViews", signupViews);
       },
 
       @on("willClearRender")
       _cleanUpSignupViews: function() {
-        messageBus.unsubscribe(`/signups/${this.get("post.id")}`);
-
         if (this.get("signupViews")) {
           _.forEach(this.get("signupViews"), v => v.destroy());
         }

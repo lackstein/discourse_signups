@@ -74,7 +74,7 @@ after_initialize do
 
           votes[signup_name] = options
           post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"] = votes
-          
+
           all_votes = post.custom_fields.select { |field| field =~ /^#{VOTES_CUSTOM_FIELD}-\d+/ }
           signup_votes = all_votes.map { |voter, signup_sheets| { user: User.find(voter.split("-").last), votes: signup_sheets[signup_name] } }
 
@@ -83,22 +83,22 @@ after_initialize do
             option["votes"] -= 1 if vote.include?(option["id"])
             # (Re)increment counter if user (still) chose this option
             option["votes"] += 1 if options.include?(option["id"])
-            
+
             # Rebuild list of users that have voted for this option
             option["voters"] = signup_votes.select { |ballot| ballot[:votes].include? option["id"] }.map { |ballot| ballot[:user].username } rescue []
           end
-          
+
           # Remove vote if empty
           votes.delete_if { |key, value| value.empty? }
           post.custom_fields.delete("#{VOTES_CUSTOM_FIELD}-#{user_id}") if !post.custom_fields["#{VOTES_CUSTOM_FIELD}-#{user_id}"].nil? && votes.empty?
-          
+
           post.custom_fields[SIGNUPS_CUSTOM_FIELD] = signups
           post.save_custom_fields(true)
-          
+
           # Automatically subscribe the voter to notifications about the event
           TopicUser.change(user, post.topic.id, notification_level: TopicUser.notification_levels[:watching])
 
-          MessageBus.publish("/signups/#{post_id}", { signups: signups })
+          MessageBus.publish("/signups/#{post.topic_id}", { post_id: post_id, signups: signups })
 
           return [signup, options]
         end
@@ -134,7 +134,7 @@ after_initialize do
 
           post.save_custom_fields(true)
 
-          MessageBus.publish("/signups/#{post_id}", { signups: signups })
+          MessageBus.publish("/signups/#{post.topic_id}", { post_id: post_id, signups: signups })
 
           signups[signup_name]
         end
@@ -186,9 +186,9 @@ after_initialize do
       options   = params.permit(options: [])
       options   = options.empty? ? [] : options["options"]
       user_id   = current_user.id
-      
+
       logger.error "SIGNUP OPTIONS (Controller): #{options.inspect}"
-      
+
       begin
         signup, options = DiscourseSignups::Signup.vote(post_id, signup_name, options, user_id, logger)
         render json: { signup: signup, vote: options }
@@ -298,14 +298,14 @@ after_initialize do
       DistributedMutex.synchronize("#{PLUGIN_NAME}-#{post.id}") do
         # load previous signups
         previous_signups = post.custom_fields[SIGNUPS_CUSTOM_FIELD] || {}
-        
+
         # extract options
         current_options = signups.values.map { |p| p["options"].map { |o| o["id"] } }.flatten.sort
         previous_options = previous_signups.values.map { |p| p["options"].map { |o| o["id"] } }.flatten.sort
 
         # are the signups different?
         if signups.keys != previous_signups.keys || current_options != previous_options
-          
+
           has_votes = previous_signups.keys.map { |p| previous_signups[p]["voters"].to_i }.sum > 0
 
           # outside of the 5-minute edit window?
@@ -356,7 +356,7 @@ after_initialize do
           post.save_custom_fields(true)
 
           # publish the changes
-          MessageBus.publish("/signups/s/#{post.id}", { signups: signups })
+          MessageBus.publish("/signups/#{post.topic_id}", { post_id: post_id, signups: signups })
         end
       end
     else
@@ -378,7 +378,9 @@ after_initialize do
   # tells the front-end we have a signup for that post
   on(:post_created) do |post|
     next if post.is_first_post? || post.custom_fields[SIGNUPS_CUSTOM_FIELD].blank?
-    MessageBus.publish("/signups", { post_id: post.id })
+    MessageBus.publish("/signups/#{post.topic_id}", {
+                        post_id: post.id,
+                        signups: post.custom_fields[SIGNUPS_CUSTOM_FIELD] })
   end
 
   add_to_serializer(:post, :signups, false) { post_custom_fields[SIGNUPS_CUSTOM_FIELD] }
