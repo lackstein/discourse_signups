@@ -35,16 +35,16 @@ en:
           between_min_and_max_options: "You may choose between <strong>%{min}</strong> and <strong>%{max}</strong> options."
 
       cast-votes:
-        title: "Cast your votes"
-        label: "Vote now!"
+        title: "Signup for event"
+        label: "Signup now!"
 
       show-results:
         title: "Display the signup results"
         label: "Show results"
 
       hide-results:
-        title: "Back to your votes"
-        label: "Hide results"
+        title: "Back to your choices"
+        label: "Hide names"
 
       open:
         title: "Open the signup"
