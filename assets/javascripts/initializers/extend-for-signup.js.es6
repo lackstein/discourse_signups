@@ -1,4 +1,5 @@
 import PostView from "discourse/views/post";
+import { on } from "ember-addons/ember-computed-decorators";
 import { onToolbarCreate } from 'discourse/components/d-editor';
 
 function createSignupView(container, post, signup, vote) {
@@ -33,12 +34,13 @@ export default {
     messageBus.subscribe("/signups", data => {
       const post = container.lookup("controller:topic").get('model.postStream').findLoadedPost(data.post_id);
       // HACK to trigger the "postViewUpdated" event
-      Em.run.next(_ => post.set("cooked", post.get("cooked") + " "));
+      Em.run.next(() => post.set("cooked", post.get("cooked") + " "));
     });
 
     // overwrite signups
     PostView.reopen({
-      _createSignupViews: function($post) {
+      @on("postViewInserted", "postViewUpdated")
+      _createSignupViews($post) {
         const post = this.get("post"),
               signups = post.get("signups"),
               votes = post.get("signups_votes") || {};
@@ -59,11 +61,11 @@ export default {
                 signupView = createSignupView(container, post, signups[signupName], votes[signupName]);
 
           $signup.replaceWith($div);
-          Em.run.next(_ => signupView.renderer.replaceIn(signupView, $div[0]));
+          Em.run.next(() => signupView.renderer.replaceIn(signupView, $div[0]));
           signupViews[signupName] = signupView;
         });
 
-        messageBus.subscribe("/signups/" + this.get("post.id"), results => {
+        messageBus.subscribe(`/signups/${this.get("post.id")}`, results => {
           if (results && results.signups) {
             _.forEach(results.signups, signup => {
               if (signupViews[signup.name]) {
@@ -74,15 +76,16 @@ export default {
         });
 
         this.set("signupViews", signupViews);
-      }.on("postViewInserted", "postViewUpdated"),
+      },
 
+      @on("willClearRender")
       _cleanUpSignupViews: function() {
-        messageBus.unsubscribe("/signups/" + this.get("post.id"));
+        messageBus.unsubscribe(`/signups/${this.get("post.id")}`);
 
         if (this.get("signupViews")) {
           _.forEach(this.get("signupViews"), v => v.destroy());
         }
-      }.on("willClearRender")
+      }
     });
   }
 };

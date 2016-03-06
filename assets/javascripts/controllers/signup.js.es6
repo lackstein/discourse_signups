@@ -1,3 +1,5 @@
+import computed from "ember-addons/ember-computed-decorators";
+
 export default Ember.Controller.extend({
   isMultiple: Ember.computed.equal("signup.type", "multiple"),
   isNumber: Ember.computed.equal("signup.type", "number"),
@@ -11,12 +13,10 @@ export default Ember.Controller.extend({
   showingResults: Em.computed.or("isClosed", "post.topic.closed", "post.topic.archived", "showResults"),
 
   showResultsDisabled: Em.computed.equal("signup.voters", 0),
-  hideResultsDisabled: Em.computed.alias("isClosed"),
+  hideResultsDisabled: Em.computed.or("isClosed", "post.topic.closed", "post.topic.archived"),
 
-  signup: function() {
-    const signup = this.get("model"),
-          vote = this.get("vote");
-
+  @computed("model", "vote")
+  signup(signup, vote) {
     if (signup) {
       const options = _.map(signup.get("options"), o => Em.Object.create(o));
 
@@ -28,52 +28,54 @@ export default Ember.Controller.extend({
     }
 
     return signup;
-  }.property("model"),
-  
+  },
+
   attendees: function() {
     let list = [];
-    this.get("signup.options").forEach(option => 
+    this.get("signup.options").forEach(option =>
       option.get("voters").forEach(voter => list.push(voter))
     );
     return list.uniq();
   }.property("signup.options.@each.voters"),
-  
-  selectedOptions: function() {
-    return _.map(this.get("signup.options").filterBy("selected"), o => o.get("id"));
-  }.property("signup.options.@each.selected"),
 
-  min: function() {
-    let min = parseInt(this.get("signup.min"), 10);
+  @computed("signup.options.@each.selected")
+  selectedOptions() {
+    return _.map(this.get("signup.options").filterBy("selected"), o => o.get("id"));
+  },
+
+  @computed("signup.min")
+  min(min) {
+    min = parseInt(min, 10);
     if (isNaN(min) || min < 1) { min = 1; }
     return min;
-  }.property("signup.min"),
+  },
 
-  max: function() {
-    let options = this.get("signup.options.length"),
-        max = parseInt(this.get("signup.max"), 10);
+  @computed("signup.max", "signup.options.length")
+  max(max, options) {
+    max = parseInt(max, 10);
     if (isNaN(max) || max > options) { max = options; }
     return max;
-  }.property("signup.max", "signup.options.length"),
+  },
 
-  votersText: function() {
-    return I18n.t("signup.voters", { count: this.get("signup.voters") });
-  }.property("signup.voters"),
+  @computed("signup.voters")
+  votersText(count) {
+    return I18n.t("signup.voters", { count });
+  },
 
-  totalVotes: function() {
+  @computed("signup.options.@each.votes")
+  totalVotes() {
     return _.reduce(this.get("signup.options"), function(total, o) {
       return total + parseInt(o.get("votes"), 10);
     }, 0);
-  }.property("signup.options.@each.votes"),
+  }.,
 
-  totalVotesText: function() {
-    return I18n.t("signup.total_votes", { count: this.get("totalVotes") });
-  }.property("totalVotes"),
+  @computed("totalVotes")
+  totalVotesText(count) {
+    return I18n.t("signup.total_votes", { count });
+  },
 
-  multipleHelpText: function() {
-    const options = this.get("signup.options.length"),
-          min = this.get("min"),
-          max = this.get("max");
-
+  @computed("min", "max", "signup.options.length")
+  multipleHelpText(min, max, options) {
     if (max > 0) {
       if (min === max) {
         if (min > 1) {
@@ -81,7 +83,7 @@ export default Ember.Controller.extend({
         }
       } else if (min > 1) {
         if (max < options) {
-          return I18n.t("signup.multiple.help.between_min_and_max_options", { min: min, max: max });
+          return I18n.t("signup.multiple.help.between_min_and_max_options", { min, max });
         } else {
           return I18n.t("signup.multiple.help.at_least_min_options", { count: min });
         }
@@ -89,39 +91,37 @@ export default Ember.Controller.extend({
         return I18n.t("signup.multiple.help.up_to_max_options", { count: max });
       }
     }
-  }.property("min", "max", "signup.options.length"),
+  },
 
-  canCastVotes: function() {
+  @computed("isClosed", "showResults", "loading", "isMultiple", "selectedOptions.length", "min", "max")
+  canCastVotes(isClosed, showResults, loading, isMultiple, selectedOptionCount, min, max) {
     if (this.get("isClosed") || this.get("loading")) {
       return false;
     }
 
-    const selectedOptionCount = this.get("selectedOptions.length");
-
-    if (this.get("isMultiple")) {
-      return (selectedOptionCount >= this.get("min") && selectedOptionCount <= this.get("max")) || selectedOptionCount == 0;
+    if (isMultiple) {
+      return selectedOptionCount >= min && selectedOptionCount <= max;
     } else {
-      return selectedOptionCount <= 1;
+      return selectedOptionCount > 0;
     }
-  }.property("isClosed", "showingResults", "loading",
-             "selectedOptions.length",
-             "isMultiple", "min", "max"),
+  },
 
   castVotesDisabled: Em.computed.not("canCastVotes"),
 
-  canToggleStatus: function() {
+  @computed("loading", "post.user_id", "post.topic.closed", "post.topic.archived")
+  canToggleStatus(loading, userId, topicClosed, topicArchived) {
     return this.currentUser &&
-           (this.currentUser.get("id") === this.get("post.user_id") || this.currentUser.get("staff")) &&
-           !this.get("loading") &&
-           !this.get("post.topic.closed") &&
-           !this.get("post.topic.archived");
-  }.property("loading", "post.user_id", "post.topic.{closed,archived}"),
+           (this.currentUser.get("id") === userId || this.currentUser.get("staff")) &&
+           !loading &&
+           !topicClosed &&
+           !topicArchived;
+  },
 
   actions: {
 
     composeMessage() {
       const Composer = require('discourse/models/composer').default;
-      
+
       return this.controllerFor('composer').open({
         action: Composer.PRIVATE_MESSAGE,
         usernames: this.get("attendees").join(','),
@@ -130,7 +130,7 @@ export default Ember.Controller.extend({
         reply: ''
       });
     },
-    
+
     toggleOption(option) {
       if (this.get("isClosed")) { return; }
       if (!this.currentUser) { return this.send("showLogin"); }
@@ -150,10 +150,8 @@ export default Ember.Controller.extend({
       if (!this.get("canCastVotes")) { return; }
       if (!this.currentUser) { return this.send("showLogin"); }
 
-      const self = this;
-
       this.set("loading", true);
-      
+
       Discourse.ajax("/signups/vote", {
         type: "PUT",
         data: {
@@ -161,13 +159,13 @@ export default Ember.Controller.extend({
           signup_name: this.get("signup.name"),
           options: this.get("selectedOptions"),
         }
-      }).then(function(results) {
-        self.setProperties({ vote: results.vote });
-        self.set("model", Em.Object.create(results.signup));
-      }).catch(function() {
+      }).then(results => {
+        this.setProperties({ vote: results.vote });
+        this.set("model", Em.Object.create(results.signup));
+      }).catch(() => {
         bootbox.alert(I18n.t("signup.error_while_casting_votes"));
-      }).finally(function() {
-        self.set("loading", false);
+      }).finally(() => {
+        this.set("loading", false);
       });
     },
 
@@ -196,11 +194,11 @@ export default Ember.Controller.extend({
                 signup_name: self.get("signup.name"),
                 status: self.get("isClosed") ? "open" : "closed",
               }
-            }).then(function(results) {
+            }).then(results => {
               self.set("model", Em.Object.create(results.signup));
-            }).catch(function() {
+            }).catch(() => {
               bootbox.alert(I18n.t("signup.error_while_toggling_status"));
-            }).finally(function() {
+            }).finally(() => {
               self.set("loading", false);
             });
           }

@@ -1,3 +1,5 @@
+import { on } from "ember-addons/ember-computed-decorators";
+
 export default Em.View.extend({
   templateName: "signup",
   classNames: ["signup"],
@@ -9,8 +11,9 @@ export default Em.View.extend({
   "data-signup-name": Em.computed.alias("signup.name"),
   "data-signup-status": Em.computed.alias("signup.status"),
 
-  _fixSignupContainerHeight: function() {
+  @on("didInsertElement")
+  _fixSignupContainerHeight() {
     const signupContainer = this.$(".signup-container");
     signupContainer.height(signupContainer.height());
-  }.on("didInsertElement")
+  }
 });
