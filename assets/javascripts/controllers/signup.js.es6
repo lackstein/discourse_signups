@@ -67,7 +67,7 @@ export default Ember.Controller.extend({
     return _.reduce(this.get("signup.options"), function(total, o) {
       return total + parseInt(o.get("votes"), 10);
     }, 0);
-  }.,
+  },
 
   @computed("totalVotes")
   totalVotesText(count) {
