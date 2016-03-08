@@ -19,8 +19,8 @@ en:
   js:
     signup:
       voters:
-        one: "person"
-        other: "people"
+        one: "%{one}"
+        other: "%{other}"
       total_votes:
         one: "total vote"
         other: "total votes"

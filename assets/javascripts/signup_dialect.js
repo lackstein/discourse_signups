@@ -102,7 +102,11 @@
       // # of voters
       info.push(["p",
                   ["span", { "class": "info-number" }, "0"],
-                  ["span", { "class": "info-text"}, I18n.t("signup.voters", { count: 0 })]
+                  ["span", { "class": "info-text"}, I18n.t("signup.voters", {
+                    count: 0,
+                    one: Discourse.SiteSettings.voters_text_one,
+                    other: Discourse.SiteSettings.voters_text_other
+                  })]
                 ]);
 
       // multiple help text

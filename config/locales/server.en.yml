@@ -18,6 +18,8 @@ en:
   site_settings:
     signup_enabled: "Allow users to create signups?"
     signup_maximum_options: "Maximum number of options allowed in a signup."
+    voters_text_one: "Noun to use when one person has signed up for an event"
+    voters_text_other: "Noun to use when many people have signed up for an event"
 
   signup:
     multiple_signups_without_name: "There are multiple signups without a name. Use the '<code>name</code>' attribute to uniquely identify your signups."
