@@ -19,8 +19,8 @@ en:
   js:
     signup:
       voters:
-        one: "rider"
-        other: "riders"
+        one: "person"
+        other: "people"
       total_votes:
         one: "total vote"
         other: "total votes"
