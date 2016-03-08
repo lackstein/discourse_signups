@@ -104,8 +104,8 @@
                   ["span", { "class": "info-number" }, "0"],
                   ["span", { "class": "info-text"}, I18n.t("signup.voters", {
                     count: 0,
-                    one: Discourse.SiteSettings.voters_text_one,
-                    other: Discourse.SiteSettings.voters_text_other
+                    one: SiteSetting.signup_voters_text_one,
+                    other: SiteSetting.signup_voters_text_other
                   })]
                 ]);
 

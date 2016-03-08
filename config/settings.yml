@@ -4,9 +4,9 @@ plugins:
   signup_maximum_options:
     default: 4
     client: true
-  voters_text_one:
+  signup_voters_text_one:
     default: "person"
     client: true
-  voters_text_other:
+  signup_voters_text_other:
     default: "people"
     client: true
