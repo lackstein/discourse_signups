@@ -12,14 +12,14 @@ has signed up.
 
 It also adds a calendar button to the text editor that automatically adds the markup for a
 signup sheet to the post you're editing.
-![Markup Example](http://i.imgur.com/aJI7Dey.png)
+![Markup Example](http://i.imgur.com/R8dQuZy.png)
 
 ## Usage
 Pretty much identical to the official polls plugin, just with 'signup' substituted for 'poll'
 
 Example:
 ```bbcode
-[signup type=multiple min=2 max=4]
+[signup type=multiple min=2 max=3]
 - option 1
 - option 2
 - option 3
