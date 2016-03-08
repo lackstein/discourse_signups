@@ -29,3 +29,14 @@ Example:
 
 Type, min, and max can all be ommitted, and you'll get a signup sheet that only allows one
 option to be selected. Min and max are both optional for `type=multiple`.
+
+## Configuration
+There are three Configuration options that can be changed from the admin settings page.
+
+1. You can enable or disable the signups plugin (default enabled).
+2. You can limit the maximum number of options in each signup sheet (default 4).
+3. You can change the noun used to describe the people that have signed up for the event.
+
+...There are options for the singular and plural version of the noun, which will be used
+...for the English translations, which are the only ones included. The default is person/people,
+...but you can see that it has been changed to rider/riders in the screenshots above.
