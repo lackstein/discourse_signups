@@ -60,7 +60,7 @@ export default Ember.Controller.extend({
   @computed("signup.voters")
   votersText(count) {
     return I18n.t("signup.voters", {
-      count: 0,
+      count: count,
       one: Discourse.SiteSettings.signup_voters_text_one,
       other: Discourse.SiteSettings.signup_voters_text_other
     });
