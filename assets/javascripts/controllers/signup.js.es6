@@ -100,7 +100,7 @@ export default Ember.Controller.extend({
     }
 
     if (isMultiple) {
-      return selectedOptionCount >= min && selectedOptionCount <= max;
+      return selectedOptionCount >= min && selectedOptionCount <= max || selectedOptionCount == 0;;
     } else {
       return selectedOptionCount > 0;
     }
