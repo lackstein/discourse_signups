@@ -1,0 +1,55 @@
+# encoding: utf-8
+# This file contains content for the server portion of the signup plugin used by Ruby
+#
+# To work with us on translations, see:
+# https://www.transifex.com/projects/p/discourse-org/
+#
+# This is a "source" file, which is used by Transifex to get translations for other languages.
+# After this file is changed, it needs to be pushed by a maintainer to Transifex:
+#
+#   tx push -s
+#
+# Read more here: https://meta.discourse.org/t/contribute-a-translation-to-discourse/14882
+#
+# To validate this YAML file after you change it, please paste it into
+# http://yamllint.com/
+
+es:
+  site_settings:
+    signup_enabled: "¿Permitir a usuarios crear votaciones para eventos?"
+    signup_maximum_options: "Máximas opcones permitidas para votar."
+    signup_voters_text_one: "Sustantivo de la persona que vota"
+    signup_voters_text_other: "Sustantivo para cuando votan muchas personas"
+
+  signup:
+    multiple_signups_without_name: "Hay varias inscripciones sin nombre. Use el atributo '<code>name</code>' para identificar de forma exclusiva sus inscripciones."
+    multiple_signups_with_same_name: "Hay multiples inscripciones con el mismo nombre: <strong>%{name}</strong>. Use el atributo '<code>name</code>' para identificar de forma exclusiva sus inscripciones."
+
+    default_signup_must_have_at_least_2_options: "La inscripción debe tener al menos 2 opciones."
+    named_signup_must_have_at_least_2_options: "La inscripción llamada <strong>%{name}</strong> debe tener al menos 2 opciones."
+
+    default_signup_must_have_less_options: "La inscripción debe tener menos de %{max} opciones."
+    named_signup_must_have_less_options: "La inscripción llamada <strong>%{name}</strong> debe tener menos de %{max} opciones."
+
+    default_signup_must_have_different_options: La inscripción debe tener diferentes opciones"
+    named_signup_must_have_different_options: "La inscripción llamada <strong>%{name}</strong> debe tener diferentes opciones."
+
+    default_signup_with_multiple_choices_has_invalid_parameters: "La inscripción con multiples opciones tiene parámetros inválidos."
+    named_signup_with_multiple_choices_has_invalid_parameters: "La inscripción llamada <strong>%{name}</strong> con multiples opciones tiene parámetros inválidos."
+
+    requires_at_least_1_valid_option: "Debes seleccionar al menos una opción válida."
+
+    cannot_change_signups_after_5_minutes: "No puedes añadir, eliminar o renombrar inscripciones después de los primeros 5 minutos."
+    op_cannot_edit_options_after_5_minutes: "No puedes añadir, eliminar o renombrar inscripciones después de los primeros 5 minutos. Por favor contacta con un moderador si nicesitas modificar las opciones de la inscripción."
+    staff_cannot_add_or_remove_options_after_5_minutes: "No puedes añadir, eliminar o renombrar inscripciones después de los primeros 5 minutos. Debes cerrar este tema y crear uno nuevo."
+
+    no_signups_associated_with_this_post: "No hay inscripciones asociadas a este tema."
+    no_signup_with_this_name: "No hay inscripciones con el nombre <strong>%{name}</strong> asociadas a este tema."
+
+    post_is_deleted: "No puede actuar en un tema eliminado."
+
+    topic_must_be_open_to_vote: "El tema debe estar abierto para votar."
+    signup_must_be_open_to_vote: "Las inscripciones deben estar abiertas para votar."
+
+    topic_must_be_open_to_toggle_status: "El tema debe estar abierto para cambiar de estado."
+    only_staff_or_op_can_toggle_status: "Solo un miembro de la administración o el creador original del tema puede cambiar el estado."
