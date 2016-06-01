@@ -1,0 +1,60 @@
+# encoding: utf-8
+# This file contains content for the client portion of the signup plugin, sent out
+# to the Javascript app.
+#
+# To work with us on translations, see:
+# https://www.transifex.com/projects/p/discourse-org/
+#
+# This is a "source" file, which is used by Transifex to get translations for other languages.
+# After this file is changed, it needs to be pushed by a maintainer to Transifex:
+#
+#   tx push -s
+#
+# Read more here: https://meta.discourse.org/t/contribute-a-translation-to-discourse/14882
+#
+# To validate this YAML file after you change it, please paste it into
+# http://yamllint.com/
+
+fr:
+  js:
+    signup:
+      voters:
+        one: "%{one}"
+        other: "%{other}"
+      total_votes:
+        one: "vote total"
+        other: "votes totaux"
+
+      average_rating: "Score moyen: <strong>%{average}</strong>."
+
+      multiple:
+        help:
+          at_least_min_options: "Vous devez choisir au moins <strong>%{count}</strong> options."
+          up_to_max_options: "Vous pouvez choisir jusqu'à <strong>%{count}</strong> options."
+          x_options: "Vous devez choisir <strong>%{count}</strong> options."
+          between_min_and_max_options: "Vous pouvez choisir entre <strong>%{min}</strong> et <strong>%{max}</strong> options."
+
+      cast-votes:
+        title: "S'inscrire à l'événement"
+        label: "S'inscrire maintenant !"
+
+      show-results:
+        title: "Afficher les résultats de l'inscription"
+        label: "Montrer les résultats"
+
+      hide-results:
+        title: "Retour à vos choix"
+        label: "Cacher les noms"
+
+      open:
+        title: "Ouvrir l'inscription"
+        label: "Ouvrir"
+        confirm: "Êtes-vous sûrs de vouloir ouvrir cette inscription ?"
+
+      close:
+        title: "Fermer l'inscription"
+        label: "Fermer"
+        confirm: "Êtes-vous sûrs de vouloir fermer cette inscription ?"
+
+      error_while_toggling_status: "Il y a eu une erreur en changeant le statut de cette inscription."
+      error_while_casting_votes: "Il y a eu une erreur dans le décompte des votes."
