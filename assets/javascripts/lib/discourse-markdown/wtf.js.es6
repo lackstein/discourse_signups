@@ -1,7 +1,7 @@
 export function setup(helper) {
   helper.replaceBlock({
-    start: /(\[code\])([\s\S]*)/igm,
-    stop: '[/code]',
+    start: /(\[cod\])([\s\S]*)/igm,
+    stop: '[/cod]',
     rawContents: true,
 
     emitter(blockContents) {
