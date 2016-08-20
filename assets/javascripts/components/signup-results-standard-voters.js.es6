@@ -1,5 +1,5 @@
 import computed from 'ember-addons/ember-computed-decorators';
-import SignupVoters from 'discourse/plugins/poll/components/signup-voters';
+import SignupVoters from 'discourse/plugins/signup/components/signup-voters';
 
 export default SignupVoters.extend({
   @computed("option.votes", "signupsVoters")
