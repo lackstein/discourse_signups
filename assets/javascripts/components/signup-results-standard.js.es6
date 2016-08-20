@@ -8,7 +8,7 @@ export default Em.Component.extend({
     this.get("signup.options").forEach(option => {
       const percentage = voters === 0 ? 0 : Math.floor(100 * option.get("votes") / voters),
             style = "width: " + percentage + "%".htmlSafe();
-            
+
       const names = option.get("voters").map(
           user => "<span class=\"username\"><a data-user-card=\"" + user + "\" class=\"trigger-user-card\">" + user + "</a></span>"
       ).join(', ');

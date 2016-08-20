@@ -83,7 +83,9 @@ after_initialize do
             option["votes"] += 1 if options.include?(option["id"])
 
             # Rebuild list of users that have voted for this option
-            option["voters"] = signup_votes.select { |ballot| ballot[:votes].include? option["id"] }.map { |ballot| ballot[:user].username } rescue []
+            option["voters"] = signup_votes
+              .select { |ballot| ballot[:votes].include? option["id"] }
+              .map { |ballot| ballot[:user].username } rescue []
           end
 
           # Remove vote if empty
@@ -208,11 +210,21 @@ after_initialize do
       end
     end
 
+    def voters
+      usernames = params.require(:usernames)
+
+      users = User.where(username: usernames).map do |user|
+        UserNameSerializer.new(user).serializable_hash
+      end
+
+      render json: { users: users }
+    end
   end
 
   DiscourseSignups::Engine.routes.draw do
     put "/vote" => "signups#vote"
     put "/toggle_status" => "signups#toggle_status"
+    get "/voters" => 'signups#voters'
   end
 
   Discourse::Application.routes.append do
