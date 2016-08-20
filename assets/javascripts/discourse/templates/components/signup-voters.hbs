@@ -1,0 +1,17 @@
+<div class="signup-voters">
+  {{#each signupsVoters as |user|}}
+    <li>
+      <a data-user-card={{unbound user.username}}>
+        {{avatar user imageSize="large" ignoreTitle="true"}}
+      </a>
+    </li>
+  {{/each}}
+
+  <div class="signup-voters-toggle-expand">
+    {{#if canLoadMore}}
+      {{#conditional-loading-spinner condition=loading size="small"}}
+        <a {{action "loadMore"}}>{{fa-icon "chevron-down"}}</a>
+      {{/conditional-loading-spinner}}
+    {{/if}}
+  </div>
+</div>

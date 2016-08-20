@@ -1,5 +1,6 @@
 import { withPluginApi } from 'discourse/lib/plugin-api';
-import { onToolbarCreate } from 'discourse/components/d-editor';
+import { observes } from "ember-addons/ember-computed-decorators";
+import { setup as signupMarkdown } from '../lib/discourse-markdown/signup';
 
 function createSignupView(container, post, signup, vote) {
   const controller = container.lookup("controller:signup", { singleton: false });
@@ -39,6 +40,7 @@ function initializeSignups(api) {
     signupsObject: null,
 
     // we need a proper ember object so it is bindable
+    @observes("signups")
     signupsChanged: function(){
       const signups  = this.get("signups");
       if (signups) {
@@ -53,7 +55,7 @@ function initializeSignups(api) {
         });
         this.set("signupsObject", this._signups);
       }
-    }.observes("signups")
+    }
   });
 
   function cleanUpSignupViews() {
@@ -68,6 +70,7 @@ function initializeSignups(api) {
     if (!$signups.length) { return; }
 
     const post = helper.getModel();
+    api.preventCloak(post.id);
     const votes = post.get('signups_votes') || {};
 
     post.signupsChanged();
@@ -75,7 +78,6 @@ function initializeSignups(api) {
     const signups = post.get("signupsObject");
     if (!signups) { return; }
 
-    cleanUpSignupViews();
     const postSignupViews = {};
 
     $signups.each((idx, signupElem) => {
@@ -83,35 +85,42 @@ function initializeSignups(api) {
       const $signup = $(signupElem);
 
       const signupName = $signup.data("signup-name");
-      const signupView = createSignupView(helper.container, post, signups[signupName], votes[signupName]);
+
+      const signupView = createSignupView(
+        helper.container,
+        post,
+        signups[signupName],
+        votes[signupName]
+      );
 
       $signup.replaceWith($div);
-      Em.run.next(() => signupView.renderer.replaceIn(signupView, $div[0]));
+      Em.run.schedule('afterRender', () => signupView.renderer.replaceIn(signupView, $div[0]));
       postSignupViews[signupName] = signupView;
     });
 
     _signupViews = postSignupViews;
   }
 
+  api.includePostAttributes("signups", "signups_votes");
   api.decorateCooked(createSignupViews, { onlyStream: true });
   api.cleanupStream(cleanUpSignupViews);
+
+  // Add button to markdown editor
+  api.onToolbarCreate(toolbar => {
+    toolbar.addButton({
+      id: 'signup-button',
+      group: "extras",
+      icon: "calendar-o",
+      description: 'Add a signup form to your post',
+      perform: e => e.addText("\n[signup type=multiple]\n- option 1\n- option 2\n[/signup]\n")
+    });
+  });
 }
 
 export default {
   name: "extend-for-signup",
 
   initialize() {
-    withPluginApi('0.1', initializeSignups);
-
-    // Add button to markdown editor
-    onToolbarCreate(toolbar => {
-      toolbar.addButton({
-        id: 'signup-button',
-        group: "extras",
-        icon: "calendar-o",
-        description: 'Add a signup form to your post',
-        perform: e => e.addText("\n[signup type=multiple]\n- option 1\n- option 2\n[/signup]\n")
-      });
-    });
+    withPluginApi('0.5', initializeSignups);
   }
 };

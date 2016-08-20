@@ -1,15 +1,15 @@
-{{#each option in options}}
+{{#each options as |option|}}
   <li>
     <div class="option">
       <p>
         <span class="percentage">{{option.percentage}}%</span>
-        <strong>{{{option.html}}}</strong>
+        {{{option.html}}}
       </p>
     </div>
     <div class="bar-back">
       <div class="bar" style={{option.style}}></div>
     </div>
-    <p>{{{option.names}}}</p>
-    <hr />
+
+    {{signup-results-standard-voters option=option}}
   </li>
 {{/each}}

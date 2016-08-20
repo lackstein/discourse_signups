@@ -1,6 +1,9 @@
+import { ajax } from 'discourse/lib/ajax';
 import computed from "ember-addons/ember-computed-decorators";
 
 export default Ember.Controller.extend({
+  needs: 'composer',
+
   isMultiple: Ember.computed.equal("signup.type", "multiple"),
   isNumber: Ember.computed.equal("signup.type", "number"),
   isRandom : Ember.computed.equal("signup.order", "random"),
@@ -126,7 +129,7 @@ export default Ember.Controller.extend({
     composeMessage() {
       const Composer = require('discourse/models/composer').default;
 
-      return this.controllerFor('composer').open({
+      return this.get('controllers.composer').open({
         action: Composer.PRIVATE_MESSAGE,
         usernames: this.get("attendees").join(','),
         archetypeId: 'private_message',
@@ -156,7 +159,7 @@ export default Ember.Controller.extend({
 
       this.set("loading", true);
 
-      Discourse.ajax("/signups/vote", {
+      ajax("/signups/vote", {
         type: "PUT",
         data: {
           post_id: this.get("post.id"),
@@ -191,7 +194,7 @@ export default Ember.Controller.extend({
           if (confirmed) {
             self.set("loading", true);
 
-            Discourse.ajax("/signups/toggle_status", {
+            ajax("/signups/toggle_status", {
               type: "PUT",
               data: {
                 post_id: self.get("post.id"),
