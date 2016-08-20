@@ -40,7 +40,7 @@ export default Ember.Component.extend({
   didInsertElement() {
     this._super();
 
-    this.set("numOfVotersToShow", Math.round(this.$().width() / 25) * 2);
+    this.set("numOfVotersToShow", Math.round(this.$().width() / 50) * 2);
     if (this.get("usernames").length > 0) this._fetchUsers();
   },
 
