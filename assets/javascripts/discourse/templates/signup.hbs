@@ -2,7 +2,7 @@
   <div class="signup-container">
       <ul>
         {{#each signup.options as |option index|}}
-          {{#unless index}}
+          {{#if index}}
           <hr />
           {{/unless}}
           {{signup-option option=option toggle="toggleOption"}}
