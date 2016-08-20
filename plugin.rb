@@ -10,8 +10,6 @@ register_asset "stylesheets/common/signup.scss"
 register_asset "stylesheets/desktop/signup.scss", :desktop
 register_asset "stylesheets/mobile/signup.scss", :mobile
 
-register_asset "javascripts/signup_dialect.js", :server_side
-
 PLUGIN_NAME ||= "discourse_signups".freeze
 
 SIGNUPS_CUSTOM_FIELD ||= "signups".freeze
