@@ -1,5 +1,6 @@
 import { withPluginApi } from 'discourse/lib/plugin-api';
 import { observes } from "ember-addons/ember-computed-decorators";
+import { setup as signupMarkdown } from '../lib/discourse-markdown/signup';
 
 function createSignupView(container, post, signup, vote) {
   const controller = container.lookup("controller:signup", { singleton: false });

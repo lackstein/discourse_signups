@@ -1,6 +1,6 @@
 # name: signups
 # about: Create signup options for events
-# version: 0.3
+# version: 0.4
 # authors: Noah Lackstein, based on work by Vikhyat Korrapati (vikhyat), Régis Hanol (zogstrip)
 # url: https://github.com/lackstein/discourse_signups
 
