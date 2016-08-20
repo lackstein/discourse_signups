@@ -9,14 +9,9 @@ export default Em.Component.extend({
       const percentage = voters === 0 ? 0 : Math.floor(100 * option.get("votes") / voters),
             style = "width: " + percentage + "%".htmlSafe();
 
-      const names = option.get("voters").map(
-          user => "<span class=\"username\"><a data-user-card=\"" + user + "\" class=\"trigger-user-card\">" + user + "</a></span>"
-      ).join(', ');
-
       option.setProperties({
         percentage,
         style,
-        names,
         title: I18n.t("signup.option_title", { count: option.get("votes") })
       });
     });
