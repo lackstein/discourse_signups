@@ -1,6 +1,7 @@
 plugins:
   signup_enabled:
     default: true
+    client: true
   signup_maximum_options:
     default: 4
     client: true
