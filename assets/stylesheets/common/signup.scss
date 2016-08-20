@@ -96,6 +96,19 @@ div.signup {
     }
   }
 
+  .signup-voters-list {
+    li {
+      display: inline;
+    }
+
+    margin-top: 10px;
+  }
+
+  .signup-voters-toggle-expand {
+    width: 100%;
+    text-align: center;
+  }
+
   .results {
 
     .option {
