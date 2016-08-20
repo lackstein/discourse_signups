@@ -10,7 +10,7 @@ registerOption((siteSettings, opts) => {
   const currentUser = (opts.getCurrentUser && opts.getCurrentUser(opts.userId)) || opts.currentUser;
   const staff = currentUser && currentUser.staff;
 
-  opts.signupMaximumOptions = siteSettings.signup_maximum_options;
+  opts.signup_maximum_options = siteSettings.signup_maximum_options;
   opts.signup_voters_text_one = siteSettings.signup_voters_text_one;
   opts.signup_voters_text_other = siteSettings.signup_voters_text_other;
 });
@@ -76,7 +76,7 @@ export function setup(helper) {
       if (attributes[DATA_PREFIX + "type"] === "number") {
         // default values
         if (isNaN(min)) { min = 1; }
-        if (isNaN(max)) { max = helper.getOptions().signupMaximumOptions; }
+        if (isNaN(max)) { max = helper.getOptions().signup_maximum_options; }
         if (isNaN(step)) { step = 1; }
         // dynamically generate options
         contents.push(["bulletlist"]);
