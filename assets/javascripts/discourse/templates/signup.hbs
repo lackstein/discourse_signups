@@ -4,7 +4,7 @@
         {{#each signup.options as |option index|}}
           {{#if index}}
           <hr />
-          {{/unless}}
+          {{/if}}
           {{signup-option option=option toggle="toggleOption"}}
           {{signup-results-standard-voters option=option}}
         {{/each}}
