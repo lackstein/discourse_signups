@@ -1,10 +1,12 @@
 <div>
   <div class="signup-container">
       <ul>
-        {{#each option in signup.options}}
+        {{#each signup.options as |option index|}}
+          {{#unless index}}
+          <hr />
+          {{/unless}}
           {{signup-option option=option toggle="toggleOption"}}
           {{signup-results-standard-voters option=option}}
-          <hr />
         {{/each}}
       </ul>
   </div>
