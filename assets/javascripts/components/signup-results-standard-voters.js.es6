@@ -7,8 +7,8 @@ export default SignupVoters.extend({
     return signupsVoters.length < voters;
   },
 
-  @computed("option.usernames", "offset")
-  voterIds(usernames) {
+  @computed("option.voters", "offset")
+  usernames(usernames) {
     return this._getIds(usernames);
   }
 });

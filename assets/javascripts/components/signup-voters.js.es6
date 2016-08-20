@@ -19,7 +19,7 @@ export default Ember.Component.extend({
 
     ajax("/signups/voters.json", {
       type: "get",
-      data: { usernames: this.get("voterIds") }
+      data: { usernames: this.get("usernames") }
     }).then(result => {
       if (this.isDestroyed) return;
       this.set("signupsVoters", this.get("signupsVoters").concat(result.users));
@@ -41,7 +41,7 @@ export default Ember.Component.extend({
     this._super();
 
     this.set("numOfVotersToShow", Math.round(this.$().width() / 25) * 2);
-    if (this.get("voterIds").length > 0) this._fetchUsers();
+    if (this.get("usernames").length > 0) this._fetchUsers();
   },
 
   actions: {
