@@ -99,9 +99,11 @@ div.signup {
   .signup-voters-list {
     li {
       display: inline;
-    }
 
-    margin-top: 10px;
+      img {
+        margin-top: 5px;
+      }
+    }
   }
 
   .signup-voters-toggle-expand {
