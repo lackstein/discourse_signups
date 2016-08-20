@@ -185,8 +185,6 @@ after_initialize do
       options   = options.empty? ? [] : options["options"]
       user_id   = current_user.id
 
-      logger.error "SIGNUP OPTIONS (Controller): #{options.inspect}"
-
       begin
         signup, options = DiscourseSignups::Signup.vote(post_id, signup_name, options, user_id, logger)
         render json: { signup: signup, vote: options }
