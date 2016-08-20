@@ -10,6 +10,7 @@ registerOption((siteSettings, opts) => {
   const currentUser = (opts.getCurrentUser && opts.getCurrentUser(opts.userId)) || opts.currentUser;
   const staff = currentUser && currentUser.staff;
 
+  opts.features.signup = !!siteSettings.signup_enabled;
   opts.signup_maximum_options = siteSettings.signup_maximum_options;
   opts.signup_voters_text_one = siteSettings.signup_voters_text_one;
   opts.signup_voters_text_other = siteSettings.signup_voters_text_other;
