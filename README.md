@@ -2,6 +2,7 @@
 
 This is a modified polls plugin that shows the usernames of everyone that selected each option.
 ![Signup Sheet Example](http://i.imgur.com/1FR6oiC.png)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flackstein%2Fdiscourse_signups.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Flackstein%2Fdiscourse_signups?ref=badge_shield)
 
 It has all the same basic features that are included in the default poll plugin, such as single
 and multiple choice signups, and min/max number of selections for multiple signups.
@@ -40,3 +41,7 @@ There are three Configuration options that can be changed from the admin setting
    There are options for the singular and plural version of the noun, which will be used
    for the English translations, which are the only ones included. The default is person/people,
    but you can see that it has been changed to rider/riders in the screenshots above.
+
+
+## License
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Flackstein%2Fdiscourse_signups.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Flackstein%2Fdiscourse_signups?ref=badge_large)
